@@ -10,14 +10,14 @@ pub struct Formula {
 }
 
 impl Formula {
-    fn new() -> Self {
+    pub fn new() -> Self {
         let variables = HashSet::new();
         let clauses = HashSet::new();
 
         Self { variables, clauses }
     }
 
-    fn new_variable(&mut self) -> Variable {
+    pub fn new_variable(&mut self) -> Variable {
         let number = self.variables.len() + 1;
         let variable = Variable::new(number);
 
@@ -26,7 +26,7 @@ impl Formula {
         variable
     }
 
-    fn add_clause(&mut self, clause: Clause) {
+    pub fn add_clause(&mut self, clause: Clause) {
         self.clauses.insert(clause);
     }
 }

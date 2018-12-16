@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use crate::binary::Binary;
 use crate::variable::Variable;
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct State {
     binary: Binary,
 }
