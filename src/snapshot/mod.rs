@@ -2,6 +2,7 @@ use crate::formula::Formula;
 use crate::state::State;
 use crate::rank::Rank;
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct Snapshot {
     ranks: Vec<Rank>,
 }

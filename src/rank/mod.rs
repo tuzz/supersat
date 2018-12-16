@@ -2,6 +2,7 @@ use crate::variable::Variable;
 use crate::formula::Formula;
 use crate::state::State;
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct Rank {
     variables: Vec<Variable>,
     states: Vec<State>,
