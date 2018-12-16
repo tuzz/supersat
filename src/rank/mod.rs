@@ -8,7 +8,7 @@ pub struct Rank {
 }
 
 impl Rank {
-    fn new(index: usize, n: usize, formula: &mut Formula) -> Self {
+    pub fn new(index: usize, n: usize, formula: &mut Formula) -> Self {
         let mut number_of_states = (0..=index).map(|i| (n - i)).product::<usize>();
         if index > 0 { number_of_states += 1; }
 
@@ -23,6 +23,12 @@ impl Rank {
             .collect();
 
         Self { variables, states }
+    }
+
+    pub fn state(&self, name: &[usize], n: usize) -> &State {
+        let index = State::index(name, n);
+
+        &self.states[index]
     }
 
     fn log_2_ceil(number: usize) -> usize {

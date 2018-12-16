@@ -54,3 +54,18 @@ mod new {
         assert_eq!(subject.states[3], State::new(3, &variables));
     }
 }
+
+mod state {
+    use super::*;
+
+    #[test]
+    fn it_returns_a_reference_to_the_named_state() {
+        let mut formula = Formula::new();
+        let subject = Subject::new(1, N, &mut formula);
+
+        let state = subject.state(&[3, 1], N);
+        let expected = State::index(&[3, 1], N);
+
+        assert_eq!(state, &subject.states[expected]);
+    }
+}
