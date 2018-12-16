@@ -22,7 +22,7 @@ mod positive {
         let mut subject = Subject::new();
         let variable = Variable::new(123);
 
-        subject.positive(&variable);
+        subject.positive(variable);
 
         assert_eq!(subject.positive_literals.contains(&variable), true);
     }
@@ -32,9 +32,9 @@ mod positive {
         let mut subject = Subject::new();
         let variable = Variable::new(123);
 
-        subject.positive(&variable);
-        subject.positive(&variable);
-        subject.positive(&variable);
+        subject.positive(variable);
+        subject.positive(variable);
+        subject.positive(variable);
 
         assert_eq!(subject.positive_literals.len(), 1);
     }
@@ -48,7 +48,7 @@ mod negative {
         let mut subject = Subject::new();
         let variable = Variable::new(123);
 
-        subject.negative(&variable);
+        subject.negative(variable);
 
         assert_eq!(subject.negative_literals.contains(&variable), true);
     }
@@ -58,9 +58,9 @@ mod negative {
         let mut subject = Subject::new();
         let variable = Variable::new(123);
 
-        subject.negative(&variable);
-        subject.negative(&variable);
-        subject.negative(&variable);
+        subject.negative(variable);
+        subject.negative(variable);
+        subject.negative(variable);
 
         assert_eq!(subject.negative_literals.len(), 1);
     }

@@ -1,6 +1,6 @@
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Hash, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Variable {
-    number: usize,
+    pub number: usize,
 }
 
 impl Variable {
