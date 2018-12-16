@@ -1,6 +1,7 @@
 use crate::variable::Variable;
 use ::bitvec::Bits;
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct Binary {
     bits: Vec<(Variable, bool)>,
 }
