@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt::{Display, Formatter, Result};
 
 use crate::variable::Variable;
 use crate::clause::Clause;
@@ -27,6 +28,18 @@ impl Formula {
 
     fn add_clause(&mut self, clause: Clause) {
         self.clauses.insert(clause);
+    }
+}
+
+impl Display for Formula {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "p cnf {} {}\n", self.variables.len(), self.clauses.len())?;
+
+        for clause in &self.clauses {
+            write!(f, "{}\n", clause)?;
+        }
+
+        Ok(())
     }
 }
 

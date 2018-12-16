@@ -65,3 +65,21 @@ mod negative {
         assert_eq!(subject.negative_literals.len(), 1);
     }
 }
+
+mod display {
+    use super::*;
+
+    #[test]
+    fn it_formats_the_clause_as_dimacs() {
+        let mut subject = Clause::new();
+
+        let a = Variable::new(123);
+        let b = Variable::new(456);
+
+        subject.positive(a);
+        subject.negative(b);
+
+        let formatted = format!("{}", subject);
+        assert_eq!(formatted, "123 -456 0");
+    }
+}

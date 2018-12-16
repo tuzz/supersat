@@ -78,3 +78,24 @@ mod add_clause {
         assert_eq!(subject.clauses.len(), 1);
     }
 }
+
+mod display {
+    use super::*;
+
+    #[test]
+    fn it_formats_the_formula_as_dimacs() {
+        let mut subject = Subject::new();
+
+        let a = subject.new_variable();
+        let b = subject.new_variable();
+
+        let mut a_implies_b = Clause::new();
+        a_implies_b.negative(a);
+        a_implies_b.positive(b);
+
+        subject.add_clause(a_implies_b);
+
+        let formatted = format!("{}", subject);
+        assert_eq!(formatted, "p cnf 2 1\n2 -1 0\n");
+    }
+}

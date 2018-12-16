@@ -1,4 +1,6 @@
 use std::collections::BTreeSet;
+use std::fmt::{Display, Formatter, Result};
+
 use crate::variable::Variable;
 
 #[derive(Debug, Hash, Eq, PartialEq)]
@@ -21,6 +23,20 @@ impl Clause {
 
     pub fn negative(&mut self, variable: Variable) {
         self.negative_literals.insert(variable);
+    }
+}
+
+impl Display for Clause {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        for variable in &self.positive_literals {
+            write!(f, "{} ", variable)?;
+        }
+
+        for variable in &self.negative_literals {
+            write!(f, "-{} ", variable)?;
+        }
+
+        write!(f, "0")
     }
 }
 
