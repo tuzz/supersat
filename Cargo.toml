@@ -5,3 +5,4 @@ authors = ["Chris Patuzzo <chris@patuzzo.co.uk>"]
 edition = "2018"
 
 [dependencies]
+bitvec = "0.9.0"
