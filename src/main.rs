@@ -1,3 +1,4 @@
+mod clause;
 mod variable;
 
 fn main() {

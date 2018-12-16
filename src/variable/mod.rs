@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Variable {
     number: usize,
 }
