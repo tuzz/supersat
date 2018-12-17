@@ -73,7 +73,7 @@ mod if_then {
     use super::*;
 
     #[test]
-    fn it_adds_a_clause_that_is_logically_equivalent_to_if_then() {
+    fn it_adds_clauses_that_are_logically_equivalent_to_if_then() {
         let mut formula = Formula::new();
         let mut logic = Logic::new(&mut formula);
 
@@ -87,5 +87,46 @@ mod if_then {
         // (not a or b)
 
         assert_eq!(dimacs(&logic), &["-111 222 -333 0", "-111 222 444 0"]);
+    }
+}
+
+mod if_all_then {
+    use super::*;
+
+    #[test]
+    fn it_adds_clauses_that_causes_the_consequent_to_be_true_if_all_conditions_are_met() {
+        let mut formula = Formula::new();
+        let mut logic = Logic::new(&mut formula);
+
+        let first_condition = &[positive(111), negative(222)];
+        let second_condition = &[negative(333), positive(444)];
+        let third_condition = &[positive(555), negative(666)];
+
+        let conditions: &[&[Literal]] = &[
+            first_condition, second_condition, third_condition
+        ];
+
+        let consequent = &[negative(777), positive(888)];
+
+        logic.if_all_then(conditions, consequent);
+
+        assert_eq!(dimacs(&logic), &[
+            "-111 222 333 -444 -555 666 -777 0",
+            "-111 222 333 -444 -555 666 888 0",
+        ]);
+    }
+}
+
+mod negate {
+    use super::*;
+
+    #[test]
+    fn it_negates_the_literals() {
+        let literals = vec![positive(123), negative(456)];
+        let negated = Logic::negate(&literals);
+
+        let expected = vec![negative(123), positive(456)];
+
+        assert_eq!(negated, expected);
     }
 }

@@ -34,8 +34,8 @@ impl<'a> Logic<'a> {
     pub fn if_then(&mut self, condition: &[Literal], consequent: &[Literal]) {
         let mut template = Clause::new();
 
-        for literal in condition {
-            template.add(literal.negate());
+        for literal in Self::negate(condition) {
+            template.add(literal);
         }
 
         for literal in consequent {
@@ -45,6 +45,18 @@ impl<'a> Logic<'a> {
 
             self.formula.add_clause(clause);
         }
+    }
+
+    pub fn if_all_then(&mut self, conditions: &[&[Literal]], consequent: &[Literal]) {
+        let condition = conditions.iter()
+            .cloned().flatten()
+            .cloned().collect::<Vec<_>>();
+
+        self.if_then(&condition, consequent);
+    }
+
+    pub fn negate(literals: &[Literal]) -> Vec<Literal> {
+        literals.iter().map(|l| l.negate()).collect()
     }
 }
 
