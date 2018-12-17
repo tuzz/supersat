@@ -40,3 +40,18 @@ mod negative {
         assert_eq!(subject.positive, false);
     }
 }
+
+mod negate {
+    use super::*;
+
+    #[test]
+    fn it_builds_a_new_literal_that_is_negated() {
+        let variable = Variable::new(123);
+
+        let positive = Subject::positive(variable);
+        let negative = Subject::negative(variable);
+
+        assert_eq!(positive.negate(), negative);
+        assert_eq!(negative.negate(), positive);
+    }
+}

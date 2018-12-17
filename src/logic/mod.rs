@@ -30,6 +30,22 @@ impl<'a> Logic<'a> {
             self.formula.add_clause(clause);
         }
     }
+
+    pub fn if_then(&mut self, condition: &[Literal], consequent: &[Literal]) {
+        let mut template = Clause::new();
+
+        for literal in condition {
+            template.add(literal.negate());
+        }
+
+        for literal in consequent {
+            let mut clause = template.clone();
+
+            clause.add(*literal);
+
+            self.formula.add_clause(clause);
+        }
+    }
 }
 
 #[cfg(test)]

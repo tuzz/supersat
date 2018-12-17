@@ -68,3 +68,24 @@ mod all_of_them {
         assert_eq!(dimacs(&logic), &["-456 0", "123 0", "789 0"]);
     }
 }
+
+mod if_then {
+    use super::*;
+
+    #[test]
+    fn it_adds_a_clause_that_is_logically_equivalent_to_if_then() {
+        let mut formula = Formula::new();
+        let mut logic = Logic::new(&mut formula);
+
+        let condition = &[positive(111), negative(222)];
+        let consequent = &[negative(333), positive(444)];
+
+        logic.if_then(condition, consequent);
+
+        // (if a then b) is equivalent to
+        // (a implies b) which is equivalent to
+        // (not a or b)
+
+        assert_eq!(dimacs(&logic), &["-111 222 -333 0", "-111 222 444 0"]);
+    }
+}

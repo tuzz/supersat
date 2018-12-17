@@ -18,6 +18,10 @@ impl Literal {
     pub fn negative(variable: Variable) -> Self {
         Self::new(variable, false)
     }
+
+    pub fn negate(&self) -> Self {
+        Self::new(self.variable, !self.positive)
+    }
 }
 
 #[cfg(test)]

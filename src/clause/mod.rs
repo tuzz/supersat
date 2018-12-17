@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter, Result};
 use crate::variable::Variable;
 use crate::literal::Literal;
 
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Clause {
     literals: BTreeSet<Literal>,
 }
