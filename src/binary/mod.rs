@@ -1,9 +1,10 @@
 use crate::variable::Variable;
+use crate::literal::Literal;
 use ::bitvec::Bits;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Binary {
-    bits: Vec<(Variable, bool)>,
+    bits: Vec<Literal>,
 }
 
 impl Binary {
@@ -17,7 +18,10 @@ impl Binary {
         let bits = variables
             .iter()
             .enumerate()
-            .map(|(i, variable)| (*variable, decimal.get(i as u8)))
+            .map(|(i, variable)| {
+                let boolean = decimal.get(i as u8);
+                Literal::new(*variable, boolean)
+            })
             .collect();
 
         Self { bits }

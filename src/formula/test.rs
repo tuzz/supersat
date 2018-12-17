@@ -96,6 +96,6 @@ mod display {
         subject.add_clause(a_implies_b);
 
         let formatted = format!("{}", subject);
-        assert_eq!(formatted, "p cnf 2 1\n2 -1 0\n");
+        assert_eq!(formatted, "p cnf 2 1\n-1 2 0\n");
     }
 }

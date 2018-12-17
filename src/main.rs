@@ -1,4 +1,5 @@
 mod variable;
+mod literal;
 mod clause;
 mod formula;
 

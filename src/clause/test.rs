@@ -9,8 +9,7 @@ mod new {
     fn it_builds_a_clause() {
         let subject = Subject::new();
 
-        assert_eq!(subject.positive_literals.len(), 0);
-        assert_eq!(subject.negative_literals.len(), 0);
+        assert_eq!(subject.literals.len(), 0);
     }
 }
 
@@ -24,7 +23,8 @@ mod positive {
 
         subject.positive(variable);
 
-        assert_eq!(subject.positive_literals.contains(&variable), true);
+        let expected = Literal::positive(variable);
+        assert_eq!(subject.literals.contains(&expected), true);
     }
 
     #[test]
@@ -36,7 +36,7 @@ mod positive {
         subject.positive(variable);
         subject.positive(variable);
 
-        assert_eq!(subject.positive_literals.len(), 1);
+        assert_eq!(subject.literals.len(), 1);
     }
 }
 
@@ -50,7 +50,8 @@ mod negative {
 
         subject.negative(variable);
 
-        assert_eq!(subject.negative_literals.contains(&variable), true);
+        let expected = Literal::negative(variable);
+        assert_eq!(subject.literals.contains(&expected), true);
     }
 
     #[test]
@@ -62,7 +63,7 @@ mod negative {
         subject.negative(variable);
         subject.negative(variable);
 
-        assert_eq!(subject.negative_literals.len(), 1);
+        assert_eq!(subject.literals.len(), 1);
     }
 }
 

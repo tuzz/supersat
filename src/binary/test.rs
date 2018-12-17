@@ -5,6 +5,10 @@ type Subject = Binary;
 mod from_decimal {
     use super::*;
 
+    fn literal(variable: Variable, positive: bool) -> Literal {
+        Literal::new(variable, positive)
+    }
+
     #[test]
     fn it_uses_the_variables_to_build_the_struct_according_to_the_decimals_binary_representation() {
         let bit0 = Variable::new(123);
@@ -17,10 +21,10 @@ mod from_decimal {
         let two = Subject::from_decimal(2, &variables);
         let three = Subject::from_decimal(3, &variables);
 
-        assert_eq!(zero.bits,  &[(bit0, false), (bit1, false)]);
-        assert_eq!(one.bits,   &[(bit0, true),  (bit1, false)]);
-        assert_eq!(two.bits,   &[(bit0, false), (bit1, true)]);
-        assert_eq!(three.bits, &[(bit0, true),  (bit1, true)]);
+        assert_eq!(zero.bits,  &[literal(bit0, false), literal(bit1, false)]);
+        assert_eq!(one.bits,   &[literal(bit0, true),  literal(bit1, false)]);
+        assert_eq!(two.bits,   &[literal(bit0, false), literal(bit1, true)]);
+        assert_eq!(three.bits, &[literal(bit0, true),  literal(bit1, true)]);
     }
 
     #[test]
