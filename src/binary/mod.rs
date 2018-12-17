@@ -4,7 +4,7 @@ use ::bitvec::Bits;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Binary {
-    bits: Vec<Literal>,
+    pub bits: Vec<Literal>,
 }
 
 impl Binary {

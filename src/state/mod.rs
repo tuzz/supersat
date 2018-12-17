@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use crate::binary::Binary;
 use crate::variable::Variable;
+use crate::literal::Literal;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct State {
@@ -11,6 +12,10 @@ pub struct State {
 impl State {
     pub fn new(index: usize, variables: &[Variable]) -> Self {
         Self { binary: Binary::from_decimal(index, variables) }
+    }
+
+    pub fn literals(&self) -> &Vec<Literal> {
+        &self.binary.bits
     }
 
     pub fn index(name: &[usize], n: usize) -> usize {

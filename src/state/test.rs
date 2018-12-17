@@ -21,6 +21,26 @@ mod new {
     }
 }
 
+mod literals {
+    use super::*;
+
+    #[test]
+    fn it_returns_the_literals_of_the_binary_for_the_state() {
+        let bit0 = Variable::new(123);
+        let bit1 = Variable::new(456);
+        let bit2 = Variable::new(789);
+
+        let variables = vec![bit0, bit1, bit2];
+        let subject = Subject::new(5, &variables);
+
+        assert_eq!(subject.literals(), &[
+            Literal::positive(bit0),
+            Literal::negative(bit1),
+            Literal::positive(bit2),
+        ]);
+    }
+}
+
 mod index {
     use super::*;
 
