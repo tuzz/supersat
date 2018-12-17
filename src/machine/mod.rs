@@ -1,4 +1,5 @@
 use crate::formula::Formula;
+use crate::state::State;
 use crate::snapshot::Snapshot;
 
 struct Machine {
@@ -15,6 +16,10 @@ impl Machine {
 
     pub fn at_time(&self, point_in_time: usize) -> &Snapshot {
         &self.snapshots[point_in_time]
+    }
+
+    pub fn max_states(&self) -> Vec<&State> {
+        self.snapshots.iter().flat_map(|s| s.max_states()).collect()
     }
 }
 

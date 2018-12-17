@@ -20,6 +20,10 @@ impl Snapshot {
 
         rank.state(name, n)
     }
+
+    pub fn max_states(&self) -> Vec<&State> {
+        self.ranks.iter().map(|r| r.max_state()).collect()
+    }
 }
 
 #[cfg(test)]

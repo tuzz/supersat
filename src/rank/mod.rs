@@ -32,6 +32,10 @@ impl Rank {
         &self.states[index]
     }
 
+    pub fn max_state(&self) -> &State {
+        self.states.last().unwrap()
+    }
+
     fn log_2_ceil(number: usize) -> usize {
         let mut bits = 1;
 

@@ -69,3 +69,19 @@ mod state {
         assert_eq!(state, &subject.states[expected]);
     }
 }
+
+mod max_state {
+    use super::*;
+
+    #[test]
+    fn it_returns_the_last_state_in_the_rank() {
+        let mut formula = Formula::new();
+        let subject = Subject::new(1, N, &mut formula);
+
+        let state = subject.max_state();
+        let expected = State::index(&[4, 3], N);
+
+        assert_eq!(expected, 12);
+        assert_eq!(state, &subject.states[expected]);
+    }
+}
