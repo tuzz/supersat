@@ -4,8 +4,8 @@ use crate::formula::Formula;
 
 type Subject<'a> = Problem<'a>;
 
-const N: usize = 3;
-const LENGTH_OF_STRING: usize = 4;
+const N: usize = 2;
+const LENGTH: usize = 3;
 
 fn dimacs(formula: &Formula) -> Vec<String> {
     let formatted = format!("{}", formula);
@@ -31,9 +31,9 @@ mod new {
     #[test]
     fn it_builds_the_struct_with_references_to_the_machine_and_logic() {
         let mut formula = Formula::new();
-        let machine = Machine::new(N, LENGTH_OF_STRING, &mut formula);
+        let machine = Machine::new(N, LENGTH, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let subject = Subject::new(N, &machine, &mut logic);
+        let subject = Subject::new(N, LENGTH, &machine, &mut logic);
 
         assert_eq!(subject.machine, &machine);
     }
@@ -44,10 +44,12 @@ mod the_machine_starts_in_the_dead_states {
 
     #[test]
     fn it_adds_clauses_that_set_the_machine_to_the_dead_states_at_time_zero() {
+        let n = 3;
+
         let mut formula = Formula::new();
-        let machine = Machine::new(N, LENGTH_OF_STRING, &mut formula);
+        let machine = Machine::new(n, LENGTH, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, &machine, &mut logic);
+        let mut subject = Subject::new(n, LENGTH, &machine, &mut logic);
 
         subject.the_machine_starts_in_the_dead_states();
 
@@ -61,6 +63,66 @@ mod the_machine_starts_in_the_dead_states {
         assert_eq!(dimacs(&formula), &[
             "-3 0", "-4 0", "-5 0",  // We're in dead state 1.
             "-6 0", "-7 0", "-8 0",  // We're in dead state 2.
+        ]);
+    }
+}
+
+mod the_machine_changes_state_when_it_reads_input {
+    use super::*;
+
+    #[test]
+    fn it_adds_clauses_that_transitions_the_machines_states_over_time() {
+        let mut formula = Formula::new();
+        let machine = Machine::new(N, LENGTH, &mut formula);
+        let mut logic = Logic::new(&mut formula);
+        let mut subject = Subject::new(N, LENGTH, &machine, &mut logic);
+
+        subject.the_machine_changes_state_when_it_reads_input();
+
+        let time_0 = machine.at_time(0);
+        let time_1 = machine.at_time(1);
+        let time_2 = machine.at_time(2);
+
+        // Time 0, Rank 0:
+        assert_eq!(literals(time_0.state(&[1])), "-1");
+        assert_eq!(literals(time_0.state(&[2])), "1");
+
+        // Time 0, Rank 1:
+        assert_eq!(literals(time_0.state(&[1, 2])), "2 -3");
+        assert_eq!(literals(time_0.state(&[2, 1])), "-2 3");
+
+        // Time 1, Rank 0:
+        assert_eq!(literals(time_1.state(&[1])), "-4");
+        assert_eq!(literals(time_1.state(&[2])), "4");
+
+        // Time 1, Rank 1:
+        assert_eq!(literals(time_1.state(&[1, 2])), "5 -6");
+        assert_eq!(literals(time_1.state(&[2, 1])), "-5 6");
+
+        // Time 2, Rank 0:
+        assert_eq!(literals(time_2.state(&[1])), "-7");
+        assert_eq!(literals(time_2.state(&[2])), "7");
+
+        // Time 2, Rank 1:
+        assert_eq!(literals(time_2.state(&[1, 2])), "8 -9");
+        assert_eq!(literals(time_2.state(&[2, 1])), "-8 9");
+
+        assert_eq!(dimacs(&formula), &[
+            // State(t=0, n=2) ^ State(t=1, n=1) -> State(t=1, n=21)
+            "-1 4 -5 0",
+            "-1 4 6 0",
+
+            // State(t=1, n=2) ^ State(t=2, n=1) -> State(t=2, n=21)
+            "-4 7 -8 0",
+            "-4 7 9 0",
+
+            // State(t=0, n=1) ^ State(t=1, n=2) -> State(t=1, n=12)
+            "1 -4 -6 0",
+            "1 -4 5 0",
+
+            // State(t=1, n=1) ^ State(t=2, n=2) -> State(t=2, n=12)
+            "4 -7 -9 0",
+            "4 -7 8 0"
         ]);
     }
 }

@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies]
 bitvec = "0.9.0"
+itertools = { git = "https://github.com/tobz1000/rust-itertools", branch = "permutations" }
