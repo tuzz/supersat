@@ -1,6 +1,6 @@
 use crate::variable::Variable;
 
-#[derive(Debug, Hash, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, Hash, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Literal {
     pub variable: Variable,
     pub positive: bool,

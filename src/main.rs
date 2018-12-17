@@ -9,6 +9,8 @@ mod rank;
 mod snapshot;
 mod machine;
 
+mod logic;
+
 fn main() {
     println!("Hello, world!");
 }

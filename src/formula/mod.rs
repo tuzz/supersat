@@ -4,6 +4,7 @@ use std::fmt::{Display, Formatter, Result};
 use crate::variable::Variable;
 use crate::clause::Clause;
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct Formula {
     variables: HashSet<Variable>,
     clauses: HashSet<Clause>,
