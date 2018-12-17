@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use super::*;
 use crate::state::State;
 use crate::formula::Formula;
@@ -7,15 +9,29 @@ type Subject<'a> = Problem<'a>;
 const N: usize = 2;
 const LENGTH: usize = 3;
 
-fn dimacs(formula: &Formula) -> Vec<String> {
-    let formatted = format!("{}", formula);
+fn assert_dimacs(formula: &Formula, expected: &[&str]) {
+    let expected = expected
+        .iter()
+        .cloned()
+        .map(String::from)
+        .collect::<HashSet<_>>();
 
-    let mut strings = formatted.lines().skip(1)
-        .map(String::from).collect::<Vec<_>>();
+    let actual = format!("{}", formula)
+        .lines()
+        .skip(1)
+        .map(String::from)
+        .collect::<HashSet<_>>();
 
-    strings.sort();
+    let missing_strings = actual
+        .difference(&expected)
+        .collect::<Vec<_>>();
 
-    strings
+    let additional_strings = expected
+        .difference(&actual)
+        .collect::<Vec<_>>();
+
+    assert_eq!(missing_strings.len(), 0, "These strings are missing:\n{:?}", missing_strings);
+    assert_eq!(additional_strings.len(), 0, "These strings are additional:\n{:?}", additional_strings);
 }
 
 fn literals(state: &State) -> String {
@@ -60,7 +76,7 @@ mod the_machine_starts_in_the_dead_states {
         assert_eq!(literals(dead_state_1), "-3 -4 -5");
         assert_eq!(literals(dead_state_2), "-6 -7 -8");
 
-        assert_eq!(dimacs(&formula), &[
+        assert_dimacs(&formula, &[
             "-3 0", "-4 0", "-5 0",  // We're in dead state 1.
             "-6 0", "-7 0", "-8 0",  // We're in dead state 2.
         ]);
@@ -107,22 +123,30 @@ mod the_machine_changes_state_when_it_reads_input {
         assert_eq!(literals(time_2.state(&[1, 2])), "8 -9");
         assert_eq!(literals(time_2.state(&[2, 1])), "-8 9");
 
-        assert_eq!(dimacs(&formula), &[
-            // State(t=0, n=2) ^ State(t=1, n=1) -> State(t=1, n=21)
-            "-1 4 -5 0",
-            "-1 4 6 0",
+        assert_dimacs(&formula, &[
+            // State(t=1, n=12) -> State(t=0, n=1)
+            "-1 -5 6 0",
 
-            // State(t=1, n=2) ^ State(t=2, n=1) -> State(t=2, n=21)
-            "-4 7 -8 0",
-            "-4 7 9 0",
+            // State(t=1, n=12) -> State(t=1, n=2)
+            "4 -5 6 0",
 
-            // State(t=0, n=1) ^ State(t=1, n=2) -> State(t=1, n=12)
-            "1 -4 -6 0",
-            "1 -4 5 0",
+            // State(t=1, n=21) -> State(t=0, n=2)
+            "1 5 -6 0",
 
-            // State(t=1, n=1) ^ State(t=2, n=2) -> State(t=2, n=12)
-            "4 -7 -9 0",
-            "4 -7 8 0"
+            // State(t=1, n=21) -> State(t=1, n=1)
+            "-4 5 -6 0",
+
+            // State(t=2, n=12) -> State(t=1, n=1)
+            "-4 -8 9 0",
+
+            // State(t=2, n=12) -> State(t=2, n=2)
+            "7 -8 9 0",
+
+            // State(t=2, n=21) -> State(t=1, n=2)
+            "4 8 -9 0",
+
+            // State(t=2, n=21) -> State(t=2, n=1)
+            "-7 8 -9 0",
         ]);
     }
 }

@@ -39,7 +39,8 @@ impl<'a> Problem<'a> {
                     let travel_to = current_time.state(&to_name).literals();
                     let on_symbol = current_time.state(symbol_name).literals();
 
-                    self.logic.if_all_then(&[travel_from, on_symbol], travel_to);
+                    self.logic.if_then(travel_to, travel_from);
+                    self.logic.if_then(travel_to, on_symbol);
                 }
             }
         }
