@@ -55,3 +55,18 @@ mod negate {
         assert_eq!(negative.negate(), positive);
     }
 }
+
+mod display {
+    use super::*;
+
+    #[test]
+    fn it_formats_the_literal_as_dimacs() {
+        let variable = Variable::new(123);
+
+        let positive = Subject::positive(variable);
+        let negative = Subject::negative(variable);
+
+        assert_eq!(format!("{}", positive), "123");
+        assert_eq!(format!("{}", negative), "-123");
+    }
+}

@@ -30,11 +30,7 @@ impl Clause {
 impl Display for Clause {
     fn fmt(&self, f: &mut Formatter) -> Result {
         for literal in &self.literals {
-            if literal.positive {
-                write!(f, "{} ", literal.variable)?;
-            } else {
-                write!(f, "-{} ", literal.variable)?;
-            }
+            write!(f, "{} ", literal)?;
         }
 
         write!(f, "0")

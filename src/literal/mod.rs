@@ -1,4 +1,5 @@
 use crate::variable::Variable;
+use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, Clone, Copy, Hash, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Literal {
@@ -21,6 +22,15 @@ impl Literal {
 
     pub fn negate(&self) -> Self {
         Self::new(self.variable, !self.positive)
+    }
+}
+
+impl Display for Literal {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        match self.positive {
+            true => write!(f, "{}", self.variable),
+            false => write!(f, "-{}", self.variable)
+        }
     }
 }
 
