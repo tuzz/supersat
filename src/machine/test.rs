@@ -13,6 +13,23 @@ mod new {
 
         assert_eq!(subject.snapshots.len(), 9);
     }
+
+    #[test]
+    fn it_builds_a_machine_with_the_correct_number_of_variables() {
+        let mut formula = Formula::new();
+        let _subject = Subject::new(N, 9, &mut formula);
+
+        let formatted = format!("{}", formula);
+
+        // Rank 0 contains 3 states which can be represented in 2 variables.
+        // Rank 1 contains 3x2+1 states which can be represented in 3 variables.
+        // Rank 2 contains 3x2+1 states which can be represented in 3 variables.
+        //
+        // In total there are 8 variables per snapshot.
+        // There are 9 snapshots so there are 72 variables in total.
+
+        assert_eq!(formatted, "p cnf 72 0\n");
+    }
 }
 
 mod at_time {
