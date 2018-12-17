@@ -2,7 +2,7 @@ use crate::literal::Literal;
 use crate::clause::Clause;
 use crate::formula::Formula;
 
-struct Logic<'a> {
+pub struct Logic<'a> {
     formula: &'a mut Formula,
 }
 

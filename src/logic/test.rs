@@ -9,8 +9,8 @@ fn negative(number: usize) -> Literal {
     Literal::negative(Variable::new(number))
 }
 
-fn dimacs(logic: &Logic) -> Vec<String> {
-    let formatted = format!("{}", logic.formula);
+fn dimacs(formula: &Formula) -> Vec<String> {
+    let formatted = format!("{}", formula);
 
     let mut strings = formatted.lines().skip(1)
         .map(String::from).collect::<Vec<_>>();
@@ -47,7 +47,7 @@ mod at_least_one {
             positive(789),
         ]);
 
-        assert_eq!(dimacs(&logic), &["123 -456 789 0"]);
+        assert_eq!(dimacs(&formula), &["123 -456 789 0"]);
     }
 }
 
@@ -65,7 +65,7 @@ mod all_of_them {
             positive(789),
         ]);
 
-        assert_eq!(dimacs(&logic), &["-456 0", "123 0", "789 0"]);
+        assert_eq!(dimacs(&formula), &["-456 0", "123 0", "789 0"]);
     }
 }
 
@@ -86,7 +86,7 @@ mod if_then {
         // (a implies b) which is equivalent to
         // (not a or b)
 
-        assert_eq!(dimacs(&logic), &["-111 222 -333 0", "-111 222 444 0"]);
+        assert_eq!(dimacs(&formula), &["-111 222 -333 0", "-111 222 444 0"]);
     }
 }
 
@@ -110,7 +110,7 @@ mod if_all_then {
 
         logic.if_all_then(conditions, consequent);
 
-        assert_eq!(dimacs(&logic), &[
+        assert_eq!(dimacs(&formula), &[
             "-111 222 333 -444 -555 666 -777 0",
             "-111 222 333 -444 -555 666 888 0",
         ]);

@@ -10,6 +10,7 @@ mod snapshot;
 mod machine;
 
 mod logic;
+mod problem;
 
 fn main() {
     println!("Hello, world!");

@@ -2,7 +2,8 @@ use crate::formula::Formula;
 use crate::state::State;
 use crate::snapshot::Snapshot;
 
-struct Machine {
+#[derive(Debug, Eq, PartialEq)]
+pub struct Machine {
     snapshots: Vec<Snapshot>,
 }
 
