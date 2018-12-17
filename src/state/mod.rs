@@ -20,12 +20,13 @@ impl State {
 
         let mut seen = HashSet::new();
         let iter = name.iter().take(n - 1);
+        let divisor = Self::factorial(n - name.len());
 
         iter.clone().enumerate().map(|(index, symbol)| {
             let smaller = Self::count_smaller(*symbol, &mut seen);
-            let position = iter.len() - index;
+            let position = n - index - 1;
 
-            let radix = Self::factorial(position);
+            let radix = Self::factorial(position) / divisor;
             let digit = symbol - smaller - 1;
 
             radix * digit

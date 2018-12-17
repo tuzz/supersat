@@ -46,8 +46,19 @@ mod index {
         assert_eq!(Subject::index(&[2, 3, 1], N), 4);
         assert_eq!(Subject::index(&[3, 1, 2], N), 5);
         assert_eq!(Subject::index(&[3, 2, 1], N), 6);
+    }
 
+    #[test]
+    fn it_works_for_some_n_equals_4_examples() {
         let n = 4;
+
+        assert_eq!(Subject::index(&[1, 2], n), 1);
+        assert_eq!(Subject::index(&[1, 3], n), 2);
+        assert_eq!(Subject::index(&[1, 4], n), 3);
+        assert_eq!(Subject::index(&[2, 1], n), 4);
+        // ...
+        assert_eq!(Subject::index(&[4, 2], n), 11);
+        assert_eq!(Subject::index(&[4, 3], n), 12);
 
         assert_eq!(Subject::index(&[1, 2, 3, 4], n), 1);
         assert_eq!(Subject::index(&[1, 2, 4, 3], n), 2);
@@ -60,6 +71,28 @@ mod index {
         // ...
         assert_eq!(Subject::index(&[4, 3, 1, 2], n), 23);
         assert_eq!(Subject::index(&[4, 3, 2, 1], n), 24);
+    }
+
+    #[test]
+    fn it_works_for_some_n_equals_5_examples() {
+        let n = 5;
+
+        assert_eq!(Subject::index(&[1, 2, 3], n), 1);
+        assert_eq!(Subject::index(&[1, 2, 4], n), 2);
+        assert_eq!(Subject::index(&[1, 2, 5], n), 3);
+        assert_eq!(Subject::index(&[1, 3, 2], n), 4);
+        assert_eq!(Subject::index(&[1, 3, 4], n), 5);
+        assert_eq!(Subject::index(&[1, 3, 5], n), 6);
+        assert_eq!(Subject::index(&[1, 4, 2], n), 7);
+        assert_eq!(Subject::index(&[1, 4, 3], n), 8);
+        assert_eq!(Subject::index(&[1, 4, 5], n), 9);
+        assert_eq!(Subject::index(&[1, 5, 2], n), 10);
+        assert_eq!(Subject::index(&[1, 5, 3], n), 11);
+        assert_eq!(Subject::index(&[1, 5, 4], n), 12);
+        assert_eq!(Subject::index(&[2, 1, 3], n), 13);
+        // ...
+        assert_eq!(Subject::index(&[5, 4, 2], n), 59);
+        assert_eq!(Subject::index(&[5, 4, 3], n), 60);
     }
 
     #[test]
