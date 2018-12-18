@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::literal::Literal;
 use crate::clause::Clause;
 use crate::formula::Formula;
@@ -11,17 +13,7 @@ impl<'a> Logic<'a> {
         Self { formula }
     }
 
-    pub fn at_least_one(&mut self, literals: &[Literal]) {
-        let mut clause = Clause::new();
-
-        for literal in literals {
-            clause.add(*literal);
-        }
-
-        self.formula.add_clause(clause);
-    }
-
-    pub fn all_of_them(&mut self, literals: &[Literal]) {
+    pub fn tautology(&mut self, literals: &[Literal]) {
         for literal in literals {
             let mut clause = Clause::new();
 
@@ -31,7 +23,7 @@ impl<'a> Logic<'a> {
         }
     }
 
-    pub fn if_then(&mut self, condition: &[Literal], consequent: &[Literal]) {
+    pub fn implies(&mut self, condition: &[Literal], consequent: &[Literal]) {
         let mut template = Clause::new();
 
         for literal in Self::negate(condition) {
@@ -47,12 +39,10 @@ impl<'a> Logic<'a> {
         }
     }
 
-    pub fn if_all_then(&mut self, conditions: &[&[Literal]], consequent: &[Literal]) {
-        let condition = conditions.iter()
-            .cloned().flatten()
-            .cloned().collect::<Vec<_>>();
-
-        self.if_then(&condition, consequent);
+    pub fn distributive_or(a: &[Literal], b: &[Literal]) -> Vec<Vec<Literal>> {
+        Itertools::cartesian_product(a.iter(), b.iter())
+            .map(|(x, y)| vec![*x, *y])
+            .collect()
     }
 
     pub fn negate(literals: &[Literal]) -> Vec<Literal> {

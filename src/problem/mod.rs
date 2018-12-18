@@ -21,7 +21,7 @@ impl<'a> Problem<'a> {
             let name = Self::dead_state_name(rank);
             let dead_state = self.machine.at_time(0).state(&name);
 
-            self.logic.all_of_them(dead_state.literals());
+            self.logic.tautology(dead_state.literals());
         }
     }
 
@@ -39,8 +39,8 @@ impl<'a> Problem<'a> {
                     let travel_to = current_time.state(&to_name).literals();
                     let on_symbol = current_time.state(symbol_name).literals();
 
-                    self.logic.if_then(travel_to, travel_from);
-                    self.logic.if_then(travel_to, on_symbol);
+                    self.logic.implies(travel_to, travel_from);
+                    self.logic.implies(travel_to, on_symbol);
                 }
             }
         }

@@ -33,33 +33,15 @@ mod new {
     }
 }
 
-mod at_least_one {
+mod tautology {
     use super::*;
 
     #[test]
-    fn it_adds_a_clause_containing_a_disjunction_of_the_literals() {
+    fn it_adds_a_clause_for_each_literal() {
         let mut formula = Formula::new();
         let mut logic = Logic::new(&mut formula);
 
-        logic.at_least_one(&[
-            positive(123),
-            negative(456),
-            positive(789),
-        ]);
-
-        assert_eq!(dimacs(&formula), &["123 -456 789 0"]);
-    }
-}
-
-mod all_of_them {
-    use super::*;
-
-    #[test]
-    fn it_adds_a_clause_for_each_literal_to_be_conjuncted() {
-        let mut formula = Formula::new();
-        let mut logic = Logic::new(&mut formula);
-
-        logic.all_of_them(&[
+        logic.tautology(&[
             positive(123),
             negative(456),
             positive(789),
@@ -69,18 +51,18 @@ mod all_of_them {
     }
 }
 
-mod if_then {
+mod implies {
     use super::*;
 
     #[test]
-    fn it_adds_clauses_that_are_logically_equivalent_to_if_then() {
+    fn it_adds_clauses_that_the_condition_implies_the_consequent() {
         let mut formula = Formula::new();
         let mut logic = Logic::new(&mut formula);
 
         let condition = &[positive(111), negative(222)];
         let consequent = &[negative(333), positive(444)];
 
-        logic.if_then(condition, consequent);
+        logic.implies(condition, consequent);
 
         // (if a then b) is equivalent to
         // (a implies b) which is equivalent to
@@ -90,30 +72,26 @@ mod if_then {
     }
 }
 
-mod if_all_then {
+mod distributive_or {
     use super::*;
 
     #[test]
-    fn it_adds_clauses_that_causes_the_consequent_to_be_true_if_all_conditions_are_met() {
-        let mut formula = Formula::new();
-        let mut logic = Logic::new(&mut formula);
+    fn it_distributes_the_literals() {
+        let a = vec![positive(111), negative(222)];
+        let b = vec![negative(333), positive(444)];
 
-        let first_condition = &[positive(111), negative(222)];
-        let second_condition = &[negative(333), positive(444)];
-        let third_condition = &[positive(555), negative(666)];
+        // (x and y) or (z and w) is equivalent to
+        // (x or z) and (x or w) and (y or z) and (y or w)
+        // by the distributive law
 
-        let conditions: &[&[Literal]] = &[
-            first_condition, second_condition, third_condition
+        let expected = vec![
+            vec![positive(111), negative(333)],
+            vec![positive(111), positive(444)],
+            vec![negative(222), negative(333)],
+            vec![negative(222), positive(444)],
         ];
 
-        let consequent = &[negative(777), positive(888)];
-
-        logic.if_all_then(conditions, consequent);
-
-        assert_eq!(dimacs(&formula), &[
-            "-111 222 333 -444 -555 666 -777 0",
-            "-111 222 333 -444 -555 666 888 0",
-        ]);
+        assert_eq!(Logic::distributive_or(&a, &b), expected);
     }
 }
 
@@ -123,10 +101,8 @@ mod negate {
     #[test]
     fn it_negates_the_literals() {
         let literals = vec![positive(123), negative(456)];
-        let negated = Logic::negate(&literals);
-
         let expected = vec![negative(123), positive(456)];
 
-        assert_eq!(negated, expected);
+        assert_eq!(Logic::negate(&literals), expected);
     }
 }
