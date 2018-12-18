@@ -47,6 +47,22 @@ impl<'a> Problem<'a> {
         }
     }
 
+    pub fn the_machine_sees_every_final_state(&mut self) {
+        let earliest = self.n - 1;
+
+        for permutation in (1..=self.n).permutations(self.n) {
+            let final_states = (earliest..self.length_of_string)
+                .map(|time| self.machine.at_time(time).state(&permutation))
+                .collect::<Vec<_>>();
+
+            let terms = final_states.iter()
+                .map(|s| s.literals().as_slice())
+                .collect::<Vec<_>>();
+
+            self.logic.at_least_one(&terms);
+        }
+    }
+
     fn dead_state_name(rank: usize) -> Vec<usize> {
         if rank == 0 {
             panic!("There is no dead state in the first rank.");

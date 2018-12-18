@@ -150,3 +150,58 @@ mod the_machine_changes_state_when_it_reads_input {
         ]);
     }
 }
+
+mod the_machine_sees_every_final_state {
+    use super::*;
+
+    #[test]
+    fn it_adds_clauses_that_check_every_final_state_is_reached() {
+        let mut formula = Formula::new();
+        let machine = Machine::new(N, LENGTH, &mut formula);
+        let mut logic = Logic::new(&mut formula);
+        let mut subject = Subject::new(N, LENGTH, &machine, &mut logic);
+
+        subject.the_machine_sees_every_final_state();
+
+        let time_0_final_state_1 = machine.at_time(0).state(&[1, 2]);
+        let time_0_final_state_2 = machine.at_time(0).state(&[2, 1]);
+
+        let time_1_final_state_1 = machine.at_time(1).state(&[1, 2]);
+        let time_1_final_state_2 = machine.at_time(1).state(&[2, 1]);
+
+        let time_2_final_state_1 = machine.at_time(2).state(&[1, 2]);
+        let time_2_final_state_2 = machine.at_time(2).state(&[2, 1]);
+
+        // Look up the literals for the final states so we know what to assert.
+        assert_eq!(literals(time_0_final_state_1), "2 -3");
+        assert_eq!(literals(time_0_final_state_2), "-2 3");
+                                                            // variable:
+        assert_eq!(literals(time_1_final_state_1), "5 -6"); // 10
+        assert_eq!(literals(time_1_final_state_2), "-5 6"); // 12
+
+        assert_eq!(literals(time_2_final_state_1), "8 -9"); // 11
+        assert_eq!(literals(time_2_final_state_2), "-8 9"); // 13
+
+        assert_dimacs(&formula, &[
+            // Variable(10) -> State(t=1, n=12)
+            "5 -10 0",
+            "-6 -10 0",
+
+            // Variable(12) -> State(t=1, n=21)
+            "-5 -12 0",
+            "6 -12 0",
+
+            // Variable(11) -> State(t=2, n=12)
+            "-9 -11 0",
+            "8 -11 0",
+
+            // Variable(13) -> State(t=2, n=21)
+            "9 -13 0",
+            "-8 -13 0",
+
+            // At least one constraints:
+            "10 11 0",
+            "12 13 0",
+        ]);
+    }
+}
