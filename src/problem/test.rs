@@ -205,3 +205,26 @@ mod the_machine_sees_every_final_state {
         ]);
     }
 }
+
+mod the_string_starts_with_ascending_numbers {
+    use super::*;
+
+    #[test]
+    fn it() {
+        let mut formula = Formula::new();
+        let machine = Machine::new(N, LENGTH, &mut formula);
+        let mut logic = Logic::new(&mut formula);
+        let mut subject = Subject::new(N, LENGTH, &machine, &mut logic);
+
+        subject.the_string_starts_with_ascending_numbers();
+
+        let time_0_state_1 = machine.at_time(0).state(&[1]);
+        let time_1_state_2 = machine.at_time(1).state(&[2]);
+
+        // Look up the literals for the states so we know what to assert.
+        assert_eq!(literals(time_0_state_1), "-1");
+        assert_eq!(literals(time_1_state_2), "4");
+
+        assert_dimacs(&formula, &["-1 0", "4 0"]);
+    }
+}

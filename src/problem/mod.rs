@@ -63,6 +63,15 @@ impl<'a> Problem<'a> {
         }
     }
 
+    pub fn the_string_starts_with_ascending_numbers(&mut self) {
+        for time in 0..self.n {
+            let symbol = time + 1;
+            let state = self.machine.at_time(time).state(&[symbol]);
+
+            self.logic.tautology(state.literals());
+        }
+    }
+
     fn dead_state_name(rank: usize) -> Vec<usize> {
         if rank == 0 {
             panic!("There is no dead state in the first rank.");

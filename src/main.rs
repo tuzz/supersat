@@ -22,5 +22,7 @@ fn main() {
     problem.the_machine_changes_state_when_it_reads_input();
     problem.the_machine_sees_every_final_state();
 
+    problem.the_string_starts_with_ascending_numbers();
+
     println!("{}", formula);
 }
