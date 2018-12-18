@@ -39,8 +39,9 @@ impl<'a> Problem<'a> {
                     let travel_to = current_time.state(&to_name).literals();
                     let on_symbol = current_time.state(symbol_name).literals();
 
-                    self.logic.implies(travel_to, travel_from);
-                    self.logic.implies(travel_to, on_symbol);
+                    let transition = Logic::and(travel_from, on_symbol);
+
+                    self.logic.implies(travel_to, &transition);
                 }
             }
         }

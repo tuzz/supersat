@@ -72,26 +72,47 @@ mod implies {
     }
 }
 
-mod distributive_or {
+mod at_least_one {
     use super::*;
 
     #[test]
-    fn it_distributes_the_literals() {
-        let a = vec![positive(111), negative(222)];
-        let b = vec![negative(333), positive(444)];
+    fn it() {
+        let mut formula = Formula::new();
+        let mut logic = Logic::new(&mut formula);
 
-        // (x and y) or (z and w) is equivalent to
-        // (x or z) and (x or w) and (y or z) and (y or w)
-        // by the distributive law
-
-        let expected = vec![
-            vec![positive(111), negative(333)],
-            vec![positive(111), positive(444)],
-            vec![negative(222), negative(333)],
-            vec![negative(222), positive(444)],
+        let terms: &[&[_]] = &[
+            &[positive(111), negative(222)],
+            &[negative(333), positive(444)],
         ];
 
-        assert_eq!(Logic::distributive_or(&a, &b), expected);
+        logic.at_least_one(terms);
+
+        assert_eq!(dimacs(&formula), &[
+            // x implies (a and b)
+            "-1 -222 0",
+            "-1 111 0",
+
+            // y implies (c and d)
+            "-2 -333 0",
+            "-2 444 0",
+
+            // x or y
+            "1 2 0",
+        ]);
+    }
+}
+
+mod and {
+    use super::*;
+
+    #[test]
+    fn it_combines_the_literals() {
+        let a = vec![positive(111), negative(222)];
+        let b = vec![negative(333)];
+
+        let expected = vec![positive(111), negative(222), negative(333)];
+
+        assert_eq!(Logic::and(&a, &b), expected);
     }
 }
 

@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 use crate::literal::Literal;
 use crate::clause::Clause;
 use crate::formula::Formula;
@@ -39,10 +37,27 @@ impl<'a> Logic<'a> {
         }
     }
 
-    pub fn distributive_or(a: &[Literal], b: &[Literal]) -> Vec<Vec<Literal>> {
-        Itertools::cartesian_product(a.iter(), b.iter())
-            .map(|(x, y)| vec![*x, *y])
-            .collect()
+    pub fn at_least_one(&mut self, terms: &[&[Literal]]) {
+        let literals = terms.iter().map(|literals| {
+            let variable = self.formula.new_variable();
+            let literal = Literal::positive(variable);
+
+            self.implies(&[literal], literals);
+
+            literal
+        });
+
+        let mut clause = Clause::new();
+
+        for literal in literals {
+            clause.add(literal);
+        }
+
+        self.formula.add_clause(clause);
+    }
+
+    pub fn and(a: &[Literal], b: &[Literal]) -> Vec<Literal> {
+        a.iter().chain(b.iter()).cloned().collect()
     }
 
     pub fn negate(literals: &[Literal]) -> Vec<Literal> {
