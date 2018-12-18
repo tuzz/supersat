@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use crate::binary::Binary;
 use crate::variable::Variable;
 use crate::literal::Literal;
+use crate::utility::Utility;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct State {
@@ -25,13 +26,13 @@ impl State {
 
         let mut seen = HashSet::new();
         let iter = name.iter().take(n - 1);
-        let divisor = Self::factorial(n - name.len());
+        let divisor = Utility::factorial(n - name.len());
 
         iter.clone().enumerate().map(|(index, symbol)| {
             let smaller = Self::count_smaller(*symbol, &mut seen);
             let position = n - index - 1;
 
-            let radix = Self::factorial(position) / divisor;
+            let radix = Utility::factorial(position) / divisor;
             let digit = symbol - smaller - 1;
 
             radix * digit
@@ -52,10 +53,6 @@ impl State {
 
     fn dead_state_offset(name: &[usize]) -> usize {
         match name.len() { 1 => 0, _ => 1 }
-    }
-
-    fn factorial(n: usize) -> usize {
-        match n { 0 => 1, _ => n * Self::factorial(n - 1) }
     }
 }
 

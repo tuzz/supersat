@@ -12,6 +12,8 @@ mod machine;
 mod logic;
 mod problem;
 
+mod utility;
+
 fn main() {
     let mut formula = crate::formula::Formula::new();
     let machine = crate::machine::Machine::new(3, 9, &mut formula);
