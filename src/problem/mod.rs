@@ -4,7 +4,7 @@ use std::iter::repeat;
 use crate::machine::Machine;
 use crate::logic::Logic;
 
-struct Problem<'a> {
+pub struct Problem<'a> {
     n: usize,
     length_of_string: usize,
     machine: &'a Machine,
@@ -12,11 +12,11 @@ struct Problem<'a> {
 }
 
 impl<'a> Problem<'a> {
-    fn new(n: usize, length_of_string: usize, machine: &'a Machine, logic: &'a mut Logic<'a>) -> Self {
+    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, logic: &'a mut Logic<'a>) -> Self {
         Self { n, length_of_string, machine, logic }
     }
 
-    fn the_machine_starts_in_the_dead_states(&mut self) {
+    pub fn the_machine_starts_in_the_dead_states(&mut self) {
         for rank in 1..self.n {
             let name = Self::dead_state_name(rank);
             let dead_state = self.machine.at_time(0).state(&name);
@@ -25,7 +25,7 @@ impl<'a> Problem<'a> {
         }
     }
 
-    fn the_machine_changes_state_when_it_reads_input(&mut self) {
+    pub fn the_machine_changes_state_when_it_reads_input(&mut self) {
         for time in 1..self.length_of_string {
             let current_time = self.machine.at_time(time);
             let previous_time = self.machine.at_time(time - 1);
