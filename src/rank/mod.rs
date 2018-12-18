@@ -27,8 +27,10 @@ impl Rank {
     }
 
     pub fn state(&self, name: &[usize], n: usize) -> &State {
-        let index = State::index(name, n);
+        self.state_by_index(State::index(name, n))
+    }
 
+    pub fn state_by_index(&self, index: usize) -> &State {
         &self.states[index]
     }
 
