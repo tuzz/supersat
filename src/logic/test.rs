@@ -51,6 +51,24 @@ mod tautology {
     }
 }
 
+mod contradiction {
+    use super::*;
+
+    #[test]
+    fn it_adds_a_clause_for_each_negated_literal() {
+        let mut formula = Formula::new();
+        let mut logic = Logic::new(&mut formula);
+
+        logic.contradiction(&[
+            positive(123),
+            negative(456),
+            positive(789),
+        ]);
+
+        assert_eq!(dimacs(&formula), &["-123 0", "-789 0", "456 0"]);
+    }
+}
+
 mod implies {
     use super::*;
 

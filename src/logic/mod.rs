@@ -21,6 +21,16 @@ impl<'a> Logic<'a> {
         }
     }
 
+    pub fn contradiction(&mut self, literals: &[Literal]) {
+        for literal in literals {
+            let mut clause = Clause::new();
+
+            clause.add(literal.negate());
+
+            self.formula.add_clause(clause);
+        }
+    }
+
     pub fn implies(&mut self, condition: &[Literal], consequent: &[Literal]) {
         let mut template = Clause::new();
 
