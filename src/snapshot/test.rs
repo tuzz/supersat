@@ -49,3 +49,22 @@ mod max_states {
         assert_eq!(states, vec![a, b, c]);
     }
 }
+
+mod number_of_states {
+    use super::*;
+
+    #[test]
+    fn it_returns_an_increasing_number_of_states_based_on_the_index() {
+        let dead_state = 1;
+        assert_eq!(Subject::number_of_states(0, N), 3);
+        assert_eq!(Subject::number_of_states(1, N), 3 * 2 + dead_state);
+        assert_eq!(Subject::number_of_states(2, N), 3 * 2 * 1 + dead_state);
+
+        let n = 6;
+
+        assert_eq!(Subject::number_of_states(0, n), 6);
+        assert_eq!(Subject::number_of_states(1, n), 6 * 5 + dead_state);
+        assert_eq!(Subject::number_of_states(2, n), 6 * 5 * 4 + dead_state);
+        assert_eq!(Subject::number_of_states(3, n), 6 * 5 * 4 * 3 + dead_state);
+    }
+}

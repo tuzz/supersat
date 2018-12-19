@@ -9,7 +9,9 @@ pub struct Snapshot {
 
 impl Snapshot {
     pub fn new(n: usize, formula: &mut Formula) -> Self {
-        let ranks = (0..n).map(|i| Rank::new(i, n, formula)).collect();
+        let ranks = (0..n)
+            .map(|i| Rank::new(Self::number_of_states(i, n), formula))
+            .collect();
 
         Self { ranks }
     }
@@ -24,6 +26,16 @@ impl Snapshot {
     pub fn max_states(&self) -> Vec<&State> {
         self.ranks.iter().map(|r| r.max_state()).collect()
     }
+
+    fn number_of_states(index: usize, n: usize) -> usize {
+        let states = (0..=index).map(|i| (n - i)).product::<usize>();
+
+        match index {
+            0 => states,
+            _ => states + 1,
+        }
+    }
+
 }
 
 #[cfg(test)]

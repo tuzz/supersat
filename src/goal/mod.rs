@@ -3,20 +3,20 @@ use crate::state::State;
 use crate::rank::Rank;
 use crate::utility::Utility;
 
-struct Goal {
+pub struct Goal {
     ranks: Vec<Rank>,
 }
 
 impl Goal {
-    fn new(n: usize, length_of_string: usize, formula: &mut Formula) -> Self {
+    pub fn new(n: usize, length_of_string: usize, formula: &mut Formula) -> Self {
         let ranks = (0..Utility::factorial(n))
-            .map(|i| Rank::new(i, length_of_string, formula))
+            .map(|_| Rank::new(length_of_string, formula))
             .collect();
 
         Self { ranks }
     }
 
-    fn subgoal(&self, name: &[usize]) -> &Rank {
+    pub fn subgoal(&self, name: &[usize]) -> &Rank {
         let index = State::index(name, name.len()) - 1;
 
         &self.ranks[index]
