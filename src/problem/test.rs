@@ -1,6 +1,8 @@
 use std::collections::HashSet;
+use std::ops::Range;
 
 use super::*;
+use crate::variable::Variable;
 use crate::state::State;
 use crate::formula::Formula;
 
@@ -241,4 +243,50 @@ mod the_string_starts_with_ascending_numbers {
 
         assert_dimacs(&formula, &["-1 0", "4 0"]);
     }
+}
+
+mod all_binary_representations_map_to_states {
+    use super::*;
+
+    #[test]
+    fn it_adds_contradiction_clauses_for_invalid_binary_representations() {
+        let mut formula = Formula::new();
+        let machine = Machine::new(N, LENGTH, &mut formula);
+        let goal = Goal::new(N, LENGTH, &mut formula);
+        let mut logic = Logic::new(&mut formula);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &mut logic);
+
+        subject.all_binary_representations_map_to_states();
+
+        let invalid = machine.invalid_ranges();
+        assert_eq!(format_invalid_range(&invalid[0]), "2..2, variables: 1");
+        assert_eq!(format_invalid_range(&invalid[1]), "3..4, variables: 2, 3");
+        assert_eq!(format_invalid_range(&invalid[2]), "2..2, variables: 4");
+        assert_eq!(format_invalid_range(&invalid[3]), "3..4, variables: 5, 6");
+        assert_eq!(format_invalid_range(&invalid[4]), "2..2, variables: 7");
+        assert_eq!(format_invalid_range(&invalid[5]), "3..4, variables: 8, 9");
+        assert_eq!(invalid.len(), 6);
+
+        let invalid = goal.invalid_ranges();
+        assert_eq!(format_invalid_range(&invalid[0]), "3..4, variables: 10, 11");
+        assert_eq!(format_invalid_range(&invalid[1]), "3..4, variables: 12, 13");
+        assert_eq!(invalid.len(), 2);
+
+        assert_dimacs(&formula, &[
+            // Contradictions for machine:
+            "-2 0", "-3 0", "-5 0", "-6 0", "-8 0", "-9 0",
+
+            // Contradictions for goal:
+            "-10 0", "-11 0", "-12 0", "-13 0",
+        ]);
+    }
+}
+
+fn format_invalid_range((range, variables): &(Range<usize>, &Vec<Variable>)) -> String {
+    let variables = variables.iter()
+        .map(|v| v.to_string())
+        .collect::<Vec<String>>()
+        .join(", ");
+
+    format!("{:?}, variables: {}", range, variables)
 }

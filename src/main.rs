@@ -37,6 +37,7 @@ fn main() {
     problem.the_machine_changes_state_when_it_reads_input();
     problem.the_goal_to_include_all_permutations_is_met();
     problem.the_string_starts_with_ascending_numbers();
+    problem.all_binary_representations_map_to_states();
 
     println!("{}", formula);
 }

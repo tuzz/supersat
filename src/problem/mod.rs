@@ -1,6 +1,7 @@
 use itertools::Itertools;
 use std::iter::repeat;
 
+use crate::binary::Binary;
 use crate::machine::Machine;
 use crate::goal::Goal;
 use crate::logic::Logic;
@@ -66,6 +67,22 @@ impl<'a> Problem<'a> {
             let state = self.machine.at_time(time).state(&[symbol]);
 
             self.logic.tautology(state.literals());
+        }
+    }
+
+    pub fn all_binary_representations_map_to_states(&mut self) {
+        for (range, variables) in self.machine.invalid_ranges() {
+            for number in range {
+                let binary = Binary::from_decimal(number, &variables);
+                self.logic.contradiction(&binary.bits);
+            }
+        }
+
+        for (range, variables) in self.goal.invalid_ranges() {
+            for number in range {
+                let binary = Binary::from_decimal(number, &variables);
+                self.logic.contradiction(&binary.bits);
+            }
         }
     }
 
