@@ -55,7 +55,7 @@ mod contradiction {
     use super::*;
 
     #[test]
-    fn it_adds_a_clause_for_each_negated_literal() {
+    fn it_adds_a_single_clause_with_the_negated_literals() {
         let mut formula = Formula::new();
         let mut logic = Logic::new(&mut formula);
 
@@ -65,7 +65,7 @@ mod contradiction {
             positive(789),
         ]);
 
-        assert_eq!(dimacs(&formula), &["-123 0", "-789 0", "456 0"]);
+        assert_eq!(dimacs(&formula), &["-123 456 -789 0"]);
     }
 }
 

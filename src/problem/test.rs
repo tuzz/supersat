@@ -274,10 +274,13 @@ mod all_binary_representations_map_to_states {
 
         assert_dimacs(&formula, &[
             // Contradictions for machine:
-            "-2 0", "-3 0", "-5 0", "-6 0", "-8 0", "-9 0",
+            "-2 -3 0",
+            "-5 -6 0",
+            "-8 -9 0",
 
             // Contradictions for goal:
-            "-10 0", "-11 0", "-12 0", "-13 0",
+            "-10 -11 0",
+            "-12 -13 0",
         ]);
     }
 }
