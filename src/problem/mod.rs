@@ -2,18 +2,20 @@ use itertools::Itertools;
 use std::iter::repeat;
 
 use crate::machine::Machine;
+use crate::goal::Goal;
 use crate::logic::Logic;
 
 pub struct Problem<'a> {
     n: usize,
     length_of_string: usize,
     machine: &'a Machine,
+    goal: &'a Goal,
     logic: &'a mut Logic<'a>,
 }
 
 impl<'a> Problem<'a> {
-    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, logic: &'a mut Logic<'a>) -> Self {
-        Self { n, length_of_string, machine, logic }
+    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, goal: &'a Goal, logic: &'a mut Logic<'a>) -> Self {
+        Self { n, length_of_string, machine, goal, logic }
     }
 
     pub fn the_machine_starts_in_the_dead_states(&mut self) {
@@ -47,19 +49,14 @@ impl<'a> Problem<'a> {
         }
     }
 
-    pub fn the_machine_sees_every_final_state(&mut self) {
-        let earliest = self.n - 1;
+    pub fn the_goal_to_include_all_permutations_is_met(&mut self) {
+        for name in (1..=self.n).permutations(self.n) {
+            for time in 0..self.length_of_string {
+                let machine_state = self.machine.at_time(time).state(&name);
+                let goal_state = self.goal.subgoal(&name).state_by_index(time);
 
-        for permutation in (1..=self.n).permutations(self.n) {
-            let final_states = (earliest..self.length_of_string)
-                .map(|time| self.machine.at_time(time).state(&permutation))
-                .collect::<Vec<_>>();
-
-            let terms = final_states.iter()
-                .map(|s| s.literals().as_slice())
-                .collect::<Vec<_>>();
-
-            self.logic.at_least_one(&terms);
+                self.logic.implies(&goal_state.literals(), &machine_state.literals());
+            }
         }
     }
 

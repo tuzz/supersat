@@ -72,36 +72,6 @@ mod implies {
     }
 }
 
-mod at_least_one {
-    use super::*;
-
-    #[test]
-    fn it() {
-        let mut formula = Formula::new();
-        let mut logic = Logic::new(&mut formula);
-
-        let terms: &[&[_]] = &[
-            &[positive(111), negative(222)],
-            &[negative(333), positive(444)],
-        ];
-
-        logic.at_least_one(terms);
-
-        assert_eq!(dimacs(&formula), &[
-            // x implies (a and b)
-            "-1 -222 0",
-            "-1 111 0",
-
-            // y implies (c and d)
-            "-2 -333 0",
-            "-2 444 0",
-
-            // x or y
-            "1 2 0",
-        ]);
-    }
-}
-
 mod and {
     use super::*;
 
