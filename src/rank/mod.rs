@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use crate::variable::Variable;
 use crate::formula::Formula;
 use crate::state::State;
@@ -31,18 +33,25 @@ impl Rank {
         &self.states[index]
     }
 
-    pub fn max_state(&self) -> &State {
-        self.states.last().unwrap()
+    pub fn invalid_range(&self) -> (Range<usize>, &Vec<Variable>) {
+        let min_invalid = self.states.len();
+        let max_invalid = Self::capacity(self.variables.len());
+
+        (min_invalid..max_invalid, &self.variables)
     }
 
     fn log_2_ceil(number: usize) -> usize {
         let mut bits = 1;
 
-        while 2_usize.pow(bits) < number {
+        while Self::capacity(bits) < number {
             bits += 1;
         }
 
         bits as usize
+    }
+
+    fn capacity(bits: usize) -> usize {
+        2_usize.pow(bits as u32)
     }
 }
 

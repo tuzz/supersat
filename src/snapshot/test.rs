@@ -32,21 +32,16 @@ mod state {
     }
 }
 
-mod max_states {
+mod invalid_ranges {
     use super::*;
 
     #[test]
-    fn it_returns_the_max_state_from_each_rank() {
+    fn it_returns_an_invalid_range_per_rank() {
         let mut formula = Formula::new();
         let subject = Subject::new(N, &mut formula);
 
-        let states = subject.max_states();
-
-        let a = subject.ranks[0].max_state();
-        let b = subject.ranks[1].max_state();
-        let c = subject.ranks[2].max_state();
-
-        assert_eq!(states, vec![a, b, c]);
+        let invalid_ranges = subject.invalid_ranges();
+        assert_eq!(invalid_ranges.len(), 3);
     }
 }
 

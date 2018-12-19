@@ -1,5 +1,7 @@
+use std::ops::Range;
+
+use crate::variable::Variable;
 use crate::formula::Formula;
-use crate::state::State;
 use crate::snapshot::Snapshot;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -19,8 +21,8 @@ impl Machine {
         &self.snapshots[point_in_time]
     }
 
-    pub fn max_states(&self) -> Vec<&State> {
-        self.snapshots.iter().flat_map(|s| s.max_states()).collect()
+    pub fn invalid_ranges(&self) -> Vec<(Range<usize>, &Vec<Variable>)> {
+        self.snapshots.iter().flat_map(|s| s.invalid_ranges()).collect()
     }
 }
 

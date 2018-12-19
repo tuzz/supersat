@@ -54,14 +54,24 @@ mod state {
     }
 }
 
-mod max_state {
+mod invalid_range {
     use super::*;
 
     #[test]
-    fn it_returns_the_last_state_in_the_rank() {
+    fn it_returns_the_range_of_indexes_that_dont_map_to_states() {
         let mut formula = Formula::new();
-        let subject = Subject::new(50, &mut formula);
 
-        assert_eq!(subject.max_state(), &subject.states[49]);
+        let fifty_five = Subject::new(55, &mut formula);
+        let sixty_four = Subject::new(64, &mut formula);
+        let sixty_five = Subject::new(65, &mut formula);
+
+        let (range, _) = fifty_five.invalid_range();
+        assert_eq!(range, 55..64);
+
+        let (range, _) = sixty_four.invalid_range();
+        assert_eq!(range, 64..64);
+
+        let (range, _) = sixty_five.invalid_range();
+        assert_eq!(range, 65..128);
     }
 }

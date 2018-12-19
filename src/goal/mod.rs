@@ -1,3 +1,6 @@
+use std::ops::Range;
+
+use crate::variable::Variable;
 use crate::formula::Formula;
 use crate::state::State;
 use crate::rank::Rank;
@@ -22,8 +25,8 @@ impl Goal {
         &self.ranks[index]
     }
 
-    pub fn max_states(&self) -> Vec<&State> {
-        self.ranks.iter().map(|r| r.max_state()).collect()
+    pub fn invalid_ranges(&self) -> Vec<(Range<usize>, &Vec<Variable>)> {
+        self.ranks.iter().map(|r| r.invalid_range()).collect()
     }
 }
 

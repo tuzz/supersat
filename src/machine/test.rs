@@ -44,21 +44,15 @@ mod at_time {
     }
 }
 
-mod max_states {
+mod invalid_ranges {
     use super::*;
 
     #[test]
-    fn it_returns_the_max_states_from_each_snapshot() {
+    fn it_returns_the_invalid_ranges_from_each_snapshot() {
         let mut formula = Formula::new();
-        let subject = Subject::new(N, 2, &mut formula);
+        let subject = Subject::new(N, 9, &mut formula);
 
-        let states = subject.max_states();
-
-        let mut a = subject.snapshots[0].max_states();
-        let mut b = subject.snapshots[1].max_states();
-
-        a.append(&mut b);
-
-        assert_eq!(states, a);
+        let invalid_ranges = subject.invalid_ranges();
+        assert_eq!(invalid_ranges.len(), 27);
     }
 }
