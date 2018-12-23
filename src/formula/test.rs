@@ -1,4 +1,5 @@
 use super::*;
+use crate::literal::Literal;
 
 type Subject = Formula;
 
@@ -57,8 +58,9 @@ mod add_clause {
         let b = subject.new_variable();
 
         let mut a_implies_b = Clause::new();
-        a_implies_b.negative(a);
-        a_implies_b.positive(b);
+
+        a_implies_b.add(Literal::negative(a));
+        a_implies_b.add(Literal::positive(b));
 
         subject.add_clause(a_implies_b);
 
@@ -90,8 +92,9 @@ mod display {
         let b = subject.new_variable();
 
         let mut a_implies_b = Clause::new();
-        a_implies_b.negative(a);
-        a_implies_b.positive(b);
+
+        a_implies_b.add(Literal::negative(a));
+        a_implies_b.add(Literal::positive(b));
 
         subject.add_clause(a_implies_b);
 

@@ -5,6 +5,7 @@ use super::*;
 use crate::variable::Variable;
 use crate::state::State;
 use crate::formula::Formula;
+use crate::bounds::Bounds;
 
 type Subject<'a> = Problem<'a>;
 
@@ -51,8 +52,10 @@ mod new {
         let mut formula = Formula::new();
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
+        let bounds = Bounds::new(N, LENGTH, &[1]);
+        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let subject = Subject::new(N, LENGTH, &machine, &goal, &mut logic);
+        let subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
 
         assert_eq!(subject.machine, &machine);
     }
@@ -67,9 +70,11 @@ mod the_machine_starts_in_the_dead_states {
 
         let mut formula = Formula::new();
         let machine = Machine::new(n, LENGTH, &mut formula);
-        let goal = Goal::new(N, LENGTH, &mut formula);
+        let goal = Goal::new(n, LENGTH, &mut formula);
+        let bounds = Bounds::new(n, LENGTH, &[1]);
+        let counter = Counter::new(n, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(n, LENGTH, &machine, &goal, &mut logic);
+        let mut subject = Subject::new(n, LENGTH, &machine, &goal, &counter, &mut logic);
 
         subject.the_machine_starts_in_the_dead_states();
 
@@ -95,8 +100,10 @@ mod the_machine_changes_state_when_it_reads_input {
         let mut formula = Formula::new();
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
+        let bounds = Bounds::new(N, LENGTH, &[1]);
+        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
 
         subject.the_machine_changes_state_when_it_reads_input();
 
@@ -156,71 +163,6 @@ mod the_machine_changes_state_when_it_reads_input {
     }
 }
 
-mod the_goal_to_include_all_permutations_is_met {
-    use super::*;
-
-    #[test]
-    fn it() { // TODO
-        let mut formula = Formula::new();
-        let machine = Machine::new(N, LENGTH, &mut formula);
-        let goal = Goal::new(N, LENGTH, &mut formula);
-        let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &mut logic);
-
-        subject.the_goal_to_include_all_permutations_is_met();
-
-        let goal_12 = goal.subgoal(&[1, 2]);
-        let goal_21 = goal.subgoal(&[2, 1]);
-
-        let time_0 = machine.at_time(0);
-        let time_1 = machine.at_time(1);
-        let time_2 = machine.at_time(2);
-
-        assert_eq!(literals(goal_12.state_by_index(0)), "-10 -11");
-        assert_eq!(literals(goal_12.state_by_index(1)), "10 -11");
-        assert_eq!(literals(goal_12.state_by_index(2)), "-10 11");
-
-        assert_eq!(literals(goal_21.state_by_index(0)), "-12 -13");
-        assert_eq!(literals(goal_21.state_by_index(1)), "12 -13");
-        assert_eq!(literals(goal_21.state_by_index(2)), "-12 13");
-
-        assert_eq!(literals(time_0.state(&[1, 2])), "2 -3");
-        assert_eq!(literals(time_0.state(&[2, 1])), "-2 3");
-
-        assert_eq!(literals(time_1.state(&[1, 2])), "5 -6");
-        assert_eq!(literals(time_1.state(&[2, 1])), "-5 6");
-
-        assert_eq!(literals(time_2.state(&[1, 2])), "8 -9");
-        assert_eq!(literals(time_2.state(&[2, 1])), "-8 9");
-
-        assert_dimacs(&formula, &[
-            // Goal(t=0, n=12) -> State(t=0, n=12)
-            "2 10 11 0",
-            "-3 10 11 0",
-
-            // Goal(t=1, n=12) -> State(t=1, n=12)
-            "5 -10 11 0",
-            "-6 -10 11 0",
-
-            // Goal(t=2, n=12) -> State(t=2, n=12)
-            "-9 10 -11 0",
-            "8 10 -11 0",
-
-            // Goal(t=0, n=21) -> State(t=0, n=21)
-            "-2 12 13 0",
-            "3 12 13 0",
-
-            // Goal(t=1, n=21) -> State(t=1, n=21)
-            "-5 -12 13 0",
-            "6 -12 13 0",
-
-            // Goal(t=2, n=21) -> State(t=2, n=21)
-            "-8 12 -13 0",
-            "9 12 -13 0",
-        ]);
-    }
-}
-
 mod the_string_starts_with_ascending_numbers {
     use super::*;
 
@@ -229,8 +171,10 @@ mod the_string_starts_with_ascending_numbers {
         let mut formula = Formula::new();
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
+        let bounds = Bounds::new(N, LENGTH, &[1]);
+        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
 
         subject.the_string_starts_with_ascending_numbers();
 
@@ -253,8 +197,10 @@ mod all_binary_representations_map_to_states {
         let mut formula = Formula::new();
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
+        let bounds = Bounds::new(N, LENGTH, &[1]);
+        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
 
         subject.all_binary_representations_map_to_states();
 
@@ -267,18 +213,13 @@ mod all_binary_representations_map_to_states {
         assert_eq!(format_invalid_range(&invalid[5]), "3..4, variables: 8, 9");
         assert_eq!(invalid.len(), 6);
 
-        let invalid = goal.invalid_ranges();
-        assert_eq!(format_invalid_range(&invalid[0]), "3..4, variables: 10, 11");
-        assert_eq!(format_invalid_range(&invalid[1]), "3..4, variables: 12, 13");
-        assert_eq!(invalid.len(), 2);
-
         assert_dimacs(&formula, &[
-            // Contradictions for machine:
+            // Clauses for machine:
             "-2 -3 0",
             "-5 -6 0",
             "-8 -9 0",
 
-            // Contradictions for goal:
+            // Clauses for goal:
             "-10 -11 0",
             "-12 -13 0",
         ]);

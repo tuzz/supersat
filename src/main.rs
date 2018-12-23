@@ -13,6 +13,7 @@ mod bounds;
 mod register;
 mod counter;
 mod goal;
+
 mod logic;
 mod problem;
 
@@ -21,6 +22,8 @@ mod utility;
 use crate::formula::Formula;
 use crate::machine::Machine;
 use crate::goal::Goal;
+use crate::bounds::Bounds;
+use crate::counter::Counter;
 use crate::logic::Logic;
 use crate::problem::Problem;
 
@@ -33,8 +36,11 @@ fn main() {
     let machine = Machine::new(N, LENGTH_OF_STRING, &mut formula);
     let goal = Goal::new(N, LENGTH_OF_STRING, &mut formula);
 
+    let bounds = Bounds::new(N, LENGTH_OF_STRING, &[]);
+    let counter = Counter::new(N, &bounds, &mut formula);
+
     let mut logic = Logic::new(&mut formula);
-    let mut problem = Problem::new(N, LENGTH_OF_STRING, &machine, &goal, &mut logic);
+    let mut problem = Problem::new(N, LENGTH_OF_STRING, &machine, &goal, &counter, &mut logic);
 
     problem.the_machine_starts_in_the_dead_states();
     problem.the_machine_changes_state_when_it_reads_input();

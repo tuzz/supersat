@@ -1,7 +1,6 @@
 use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter, Result};
 
-use crate::variable::Variable;
 use crate::literal::Literal;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
@@ -16,14 +15,6 @@ impl Clause {
 
     pub fn add(&mut self, literal: Literal) {
         self.literals.insert(literal);
-    }
-
-    pub fn positive(&mut self, variable: Variable) {
-        self.add(Literal::positive(variable));
-    }
-
-    pub fn negative(&mut self, variable: Variable) {
-        self.add(Literal::negative(variable));
     }
 }
 

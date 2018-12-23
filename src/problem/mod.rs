@@ -4,6 +4,7 @@ use std::iter::repeat;
 use crate::binary::Binary;
 use crate::machine::Machine;
 use crate::goal::Goal;
+use crate::counter::Counter;
 use crate::logic::Logic;
 
 pub struct Problem<'a> {
@@ -11,12 +12,13 @@ pub struct Problem<'a> {
     length_of_string: usize,
     machine: &'a Machine,
     goal: &'a Goal,
+    counter: &'a Counter,
     logic: &'a mut Logic<'a>,
 }
 
 impl<'a> Problem<'a> {
-    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, goal: &'a Goal, logic: &'a mut Logic<'a>) -> Self {
-        Self { n, length_of_string, machine, goal, logic }
+    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, goal: &'a Goal, counter: &'a Counter, logic: &'a mut Logic<'a>) -> Self {
+        Self { n, length_of_string, machine, goal, counter, logic }
     }
 
     pub fn the_machine_starts_in_the_dead_states(&mut self) {

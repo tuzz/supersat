@@ -1,4 +1,5 @@
 use super::*;
+use crate::variable::Variable;
 
 type Subject = Clause;
 
@@ -13,60 +14,6 @@ mod new {
     }
 }
 
-mod positive {
-    use super::*;
-
-    #[test]
-    fn it_adds_the_variable_as_a_positive_literal() {
-        let mut subject = Subject::new();
-        let variable = Variable::new(123);
-
-        subject.positive(variable);
-
-        let expected = Literal::positive(variable);
-        assert_eq!(subject.literals.contains(&expected), true);
-    }
-
-    #[test]
-    fn it_de_duplicates() {
-        let mut subject = Subject::new();
-        let variable = Variable::new(123);
-
-        subject.positive(variable);
-        subject.positive(variable);
-        subject.positive(variable);
-
-        assert_eq!(subject.literals.len(), 1);
-    }
-}
-
-mod negative {
-    use super::*;
-
-    #[test]
-    fn it_adds_the_variable_as_a_negative_literal() {
-        let mut subject = Subject::new();
-        let variable = Variable::new(123);
-
-        subject.negative(variable);
-
-        let expected = Literal::negative(variable);
-        assert_eq!(subject.literals.contains(&expected), true);
-    }
-
-    #[test]
-    fn it_de_duplicates() {
-        let mut subject = Subject::new();
-        let variable = Variable::new(123);
-
-        subject.negative(variable);
-        subject.negative(variable);
-        subject.negative(variable);
-
-        assert_eq!(subject.literals.len(), 1);
-    }
-}
-
 mod display {
     use super::*;
 
@@ -77,8 +24,8 @@ mod display {
         let a = Variable::new(123);
         let b = Variable::new(456);
 
-        subject.positive(a);
-        subject.negative(b);
+        subject.add(Literal::positive(a));
+        subject.add(Literal::negative(b));
 
         let formatted = format!("{}", subject);
         assert_eq!(formatted, "123 -456 0");
