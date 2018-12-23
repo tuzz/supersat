@@ -10,6 +10,7 @@ mod snapshot;
 mod machine;
 
 mod bounds;
+mod register;
 mod goal;
 mod logic;
 mod problem;
