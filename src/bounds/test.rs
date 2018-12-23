@@ -35,6 +35,25 @@ mod allowed_waste {
     }
 }
 
+mod wasted_symbol_ranges {
+    use super::*;
+
+    #[test]
+    fn it_returns_the_allowed_waste_for_each_index_starting_from_n_minus_one() {
+        let subject = Subject::new(N, LENGTH, &[3, 5]);
+
+        assert_eq!(subject.wasted_symbol_ranges(), &[
+            0..=1,
+            0..=1,
+            0..=1,
+            1..=2,
+            1..=2,
+            1..=2,
+            2..=2,
+        ]);
+    }
+}
+
 mod max_perms_at_last_waste {
     use super::*;
 

@@ -16,7 +16,13 @@ impl Bounds {
         Self { n, length_of_string, max_permutations }
     }
 
-    pub fn allowed_waste(&self, index: usize) -> RangeInclusive<usize> {
+    pub fn wasted_symbol_ranges(&self) -> Vec<RangeInclusive<usize>> {
+        let indexes = (self.n - 1)..=self.goal_index();
+
+        indexes.map(|i| self.allowed_waste(i)).collect()
+    }
+
+    fn allowed_waste(&self, index: usize) -> RangeInclusive<usize> {
         let mut wasted_symbols = vec![];
 
         // println!("trying to reach goal of {} permutations", self.goal_permutations());

@@ -11,6 +11,7 @@ mod machine;
 
 mod bounds;
 mod register;
+mod counter;
 mod goal;
 mod logic;
 mod problem;
