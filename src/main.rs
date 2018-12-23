@@ -9,6 +9,7 @@ mod rank;
 mod snapshot;
 mod machine;
 
+mod bounds;
 mod goal;
 mod logic;
 mod problem;
