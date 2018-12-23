@@ -90,6 +90,30 @@ mod implies {
     }
 }
 
+mod alias {
+    use super::*;
+
+    #[test]
+    fn it_creates_a_literal_with_an_if_and_only_if_to_the_literals() {
+        let mut formula = Formula::new();
+        let mut logic = Logic::new(&mut formula);
+
+        let literals = &[positive(111), negative(222)];
+        let alias = logic.alias(literals);
+
+        assert_eq!(format!("{}", alias), "1");
+
+        assert_eq!(dimacs(&formula), &[
+            // literal -> literals
+            "-1 -222 0",
+            "-1 111 0",
+
+            // literals -> literal
+            "1 -111 222 0",
+        ]);
+    }
+}
+
 mod and {
     use super::*;
 

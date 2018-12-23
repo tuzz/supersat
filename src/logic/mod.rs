@@ -47,6 +47,16 @@ impl<'a> Logic<'a> {
         }
     }
 
+    pub fn alias(&mut self, literals: &[Literal]) -> Literal {
+        let variable = self.formula.new_variable();
+        let literal = Literal::positive(variable);
+
+        self.implies(literals, &[literal]);
+        self.implies(&[literal], literals);
+
+        literal
+    }
+
     pub fn and(a: &[Literal], b: &[Literal]) -> Vec<Literal> {
         a.iter().chain(b.iter()).cloned().collect()
     }
