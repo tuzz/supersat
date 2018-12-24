@@ -33,6 +33,13 @@ mod allowed_waste {
         assert_eq!(subject.allowed_waste(7), 1..=2);
         assert_eq!(subject.allowed_waste(8), 2..=2);
     }
+
+    #[test]
+    fn it_returns_zero_if_max_permutations_isnt_known() {
+        let subject = Subject::new(N, LENGTH, &[]);
+
+        assert_eq!(subject.allowed_waste(2), 0..=0);
+    }
 }
 
 mod wasted_symbol_ranges {

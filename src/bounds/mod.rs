@@ -63,9 +63,12 @@ impl Bounds {
 
             // Push the current wasted symbols if the goal can be reached.
             if furthest_permutations >= self.goal_permutations() {
-                wasted_symbols.push(w)
+                wasted_symbols.push(w);
             }
+        }
 
+        if wasted_symbols.is_empty() {
+            return 0..=0;
         }
 
         *wasted_symbols.first().unwrap()..=*wasted_symbols.last().unwrap()

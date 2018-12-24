@@ -1,29 +1,43 @@
 use std::ops::RangeInclusive;
+use std::cmp::max;
 
-use crate::variable::Variable;
+use crate::literal::Literal;
 use crate::formula::Formula;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Register {
     range: RangeInclusive<usize>,
-    variables: Vec<Variable>,
+    literals: Vec<Literal>,
 }
 
 impl Register {
     pub fn new(range: RangeInclusive<usize>, formula: &mut Formula) -> Self {
-        let variables = range
+        let literals = range
             .clone()
+            .skip_while(|w| *w == 0)
             .map(|_| formula.new_variable())
+            .map(|v| Literal::positive(v))
             .collect();
 
-        Self { range, variables }
+        Self { range, literals }
     }
 
-    pub fn variable_for_count(&self, count: usize) -> Option<&Variable> {
-        let start = *self.range.start();
-        let index = count.checked_sub(start)?;
+    pub fn start(&self) -> usize {
+        *self.range.start()
+    }
 
-        self.variables.get(index)
+    pub fn end(&self) -> usize {
+        *self.range.end()
+    }
+
+    pub fn literal_for_count(&self, count: usize) -> Option<Literal> {
+        self.literals.get(self.index(count)?).cloned()
+    }
+
+    fn index(&self, count: usize) -> Option<usize> {
+        let start = max(self.start(), 1);
+
+        count.checked_sub(start)
     }
 }
 

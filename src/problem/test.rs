@@ -189,6 +189,66 @@ mod the_string_starts_with_ascending_numbers {
     }
 }
 
+mod the_number_of_wasted_symbols_is_within_bounds {
+    use super::*;
+
+    #[test]
+    fn it() {
+        let mut formula = Formula::new();
+        let machine = Machine::new(N, LENGTH, &mut formula);
+        let goal = Goal::new(N, LENGTH, &mut formula);
+        let bounds = Bounds::new(N, LENGTH, &[1]);
+        let counter = Counter::new(N, &bounds, &mut formula);
+        let mut logic = Logic::new(&mut formula);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+
+        subject.the_number_of_wasted_symbols_is_within_bounds();
+
+        assert_eq!(bounds.wasted_symbol_ranges(),  &[0..=1, 1..=1]);
+
+        // Look up the literals so we know what to assert.
+        let time_1_dead_state = machine.at_time(1).state(&[0, 0]);
+        let time_2_dead_state = machine.at_time(2).state(&[0, 0]);
+
+        let time_1_count_1 = counter.at_time(1).literal_for_count(1).unwrap();
+        let time_2_count_1 = counter.at_time(2).literal_for_count(1).unwrap();
+
+        assert_eq!(literals(time_1_dead_state), "-5 -6"); // S(t=1, n=00)
+        assert_eq!(literals(time_2_dead_state), "-8 -9"); // S(t=2, n=00)
+
+        assert_eq!(format!("{}", time_1_count_1), "14"); // R(t=1, c=1)
+        assert_eq!(format!("{}", time_2_count_1), "15"); // R(t=2, c=1)
+
+        assert_dimacs(&formula, &[
+            // (5 and 6) implies 16 which an alias for S(t=1, n=00)
+            "5 6 16 0",
+
+            // 16 implies (5 and 6)
+            "-5 -16 0",
+            "-6 -16 0",
+
+            // (8 and 9) implies 17 which is an alias for S(t=2, n=00)
+            "8 9 17 0",
+
+            // 17 implies (8 and 9)
+            "-8 -17 0",
+            "-9 -17 0",
+
+            // (1)  S(t=1, n=00) implies R(t=1, c=1)
+            "14 -16 0",
+
+            // (1)  S(t=2, n=00) implies R(t=2, c=1)
+            "15 -17 0",
+
+            // (3)  R(t=1, c=1) implies R(t=2, c=1)
+            "-14 15 0",
+
+            // (5)  S(t=2, n=00) implies -R(t=1, c=1)
+            "-14 -17 0",
+        ]);
+    }
+}
+
 mod all_binary_representations_map_to_states {
     use super::*;
 
