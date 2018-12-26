@@ -189,11 +189,72 @@ mod the_string_starts_with_ascending_numbers {
     }
 }
 
+mod each_permutation_appears_at_most_once {
+    use super::*;
+
+    #[test]
+    fn it_adds_clauses_forcing_the_goal_state_to_point_to_a_single_position_in_the_string() {
+        let mut formula = Formula::new();
+        let machine = Machine::new(N, LENGTH, &mut formula);
+        let goal = Goal::new(N, LENGTH, &mut formula);
+        let bounds = Bounds::new(N, LENGTH, &[1]);
+        let counter = Counter::new(N, &bounds, &mut formula);
+        let mut logic = Logic::new(&mut formula);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+
+        subject.each_permutation_appears_at_most_once();
+
+        // Machine states:
+        let time_1_state_1 = machine.at_time(1).state(&[1, 2]);
+        let time_1_state_2 = machine.at_time(1).state(&[2, 1]);
+
+        let time_2_state_1 = machine.at_time(2).state(&[1, 2]);
+        let time_2_state_2 = machine.at_time(2).state(&[2, 1]);
+
+        assert_eq!(literals(time_1_state_1), "5 -6");
+        assert_eq!(literals(time_1_state_2), "-5 6");
+
+        assert_eq!(literals(time_2_state_1), "8 -9");
+        assert_eq!(literals(time_2_state_2), "-8 9");
+
+        // Goal states:
+        let time_1_goal_1 = goal.subgoal(&[1, 2]).state_by_index(1);
+        let time_1_goal_2 = goal.subgoal(&[2, 1]).state_by_index(1);
+
+        let time_2_goal_1 = goal.subgoal(&[1, 2]).state_by_index(2);
+        let time_2_goal_2 = goal.subgoal(&[2, 1]).state_by_index(2);
+
+        assert_eq!(literals(time_1_goal_1), "10 -11");
+        assert_eq!(literals(time_1_goal_2), "12 -13");
+
+        assert_eq!(literals(time_2_goal_1), "-10 11");
+        assert_eq!(literals(time_2_goal_2), "-12 13");
+
+        assert_dimacs(&formula, &[
+            // S(t=1, n=12) implies G(t=1, n=12)
+            "-5 6 10 0",
+            "-5 6 -11 0",
+
+            // S(t=1, n=21) implies G(t=1, n=21)
+            "5 -6 12 0",
+            "5 -6 -13 0",
+
+            // S(t=2, n=12) implies G(t=2, n=12)
+            "-8 9 -10 0",
+            "-8 9 11 0",
+
+            // S(t=2, n=21) implies G(t=2, n=21)
+            "8 -9 13 0",
+            "8 -9 -12 0",
+        ]);
+    }
+}
+
 mod the_number_of_wasted_symbols_is_within_bounds {
     use super::*;
 
     #[test]
-    fn it() {
+    fn it_limits_the_number_of_wasted_symbols_in_the_string() {
         let mut formula = Formula::new();
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);

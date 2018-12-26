@@ -54,13 +54,13 @@ impl<'a> Problem<'a> {
         }
     }
 
-    pub fn the_goal_to_include_all_permutations_is_met(&mut self) {
+    pub fn each_permutation_appears_at_most_once(&mut self) {
         for name in (1..=self.n).permutations(self.n) {
-            for time in 0..self.length_of_string {
+            for time in 1..self.length_of_string {
                 let machine_state = self.machine.at_time(time).state(&name);
                 let goal_state = self.goal.subgoal(&name).state_by_index(time);
 
-                self.logic.implies(&goal_state.literals(), &machine_state.literals());
+                self.logic.implies(&machine_state.literals(), &goal_state.literals());
             }
         }
     }

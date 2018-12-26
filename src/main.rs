@@ -44,7 +44,7 @@ fn main() {
 
     problem.the_machine_starts_in_the_dead_states();
     problem.the_machine_changes_state_when_it_reads_input();
-    problem.the_goal_to_include_all_permutations_is_met();
+    problem.each_permutation_appears_at_most_once();
     problem.the_string_starts_with_ascending_numbers();
     problem.the_number_of_wasted_symbols_is_within_bounds();
     problem.all_binary_representations_map_to_states();
