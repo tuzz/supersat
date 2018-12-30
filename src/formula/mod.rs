@@ -1,5 +1,8 @@
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result};
+use std::io::{Write, BufWriter};
+use std::fs::File;
+use std::path::Path;
 
 use crate::variable::Variable;
 use crate::clause::Clause;
@@ -29,6 +32,25 @@ impl Formula {
 
     pub fn add_clause(&mut self, clause: Clause) {
         self.clauses.insert(clause);
+    }
+
+    pub fn generate<F: Fn(&mut Self)>(filename: &String, callback: F) {
+        if Path::new(filename).exists() {
+            return;
+        }
+
+        let mut formula = Self::new();
+
+        callback(&mut formula);
+
+        let file = File::create(filename).unwrap();
+        let mut buffer = BufWriter::new(file);
+
+        write!(buffer, "p cnf {} {}\n", formula.variables.len(), formula.clauses.len()).unwrap();
+
+        for clause in &formula.clauses {
+            write!(buffer, "{}\n", clause).unwrap();
+        }
     }
 }
 
