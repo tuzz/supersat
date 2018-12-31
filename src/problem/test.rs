@@ -53,9 +53,8 @@ mod new {
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
         let bounds = Bounds::new(N, LENGTH, &[1]);
-        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+        let subject = Subject::new(N, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         assert_eq!(subject.machine, &machine);
     }
@@ -72,9 +71,8 @@ mod the_machine_starts_in_the_dead_states {
         let machine = Machine::new(n, LENGTH, &mut formula);
         let goal = Goal::new(n, LENGTH, &mut formula);
         let bounds = Bounds::new(n, LENGTH, &[1]);
-        let counter = Counter::new(n, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(n, LENGTH, &machine, &goal, &counter, &mut logic);
+        let mut subject = Subject::new(n, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         subject.the_machine_starts_in_the_dead_states();
 
@@ -101,9 +99,8 @@ mod the_machine_changes_state_when_it_reads_input {
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
         let bounds = Bounds::new(N, LENGTH, &[1]);
-        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         subject.the_machine_changes_state_when_it_reads_input();
 
@@ -159,6 +156,16 @@ mod the_machine_changes_state_when_it_reads_input {
 
             // State(t=2, n=21) -> State(t=2, n=1)
             "-7 8 -9 0",
+
+            // Clauses for other implication direction:
+            "-4 7 9 0",
+            "-1 4 -5 0",
+            "1 -4 -6 0",
+            "4 -7 -9 0",
+            "4 -7 8 0",
+            "1 -4 5 0",
+            "-4 7 -8 0",
+            "-1 4 6 0",
         ]);
     }
 }
@@ -172,9 +179,8 @@ mod the_string_starts_with_ascending_numbers {
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
         let bounds = Bounds::new(N, LENGTH, &[1]);
-        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         subject.the_string_starts_with_ascending_numbers();
 
@@ -198,9 +204,8 @@ mod each_permutation_appears_at_most_once {
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
         let bounds = Bounds::new(N, LENGTH, &[1]);
-        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         subject.each_permutation_appears_at_most_once();
 
@@ -259,9 +264,8 @@ mod the_number_of_wasted_symbols_is_within_bounds {
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
         let bounds = Bounds::new(N, LENGTH, &[1]);
-        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         subject.the_number_of_wasted_symbols_is_within_bounds();
 
@@ -271,41 +275,35 @@ mod the_number_of_wasted_symbols_is_within_bounds {
         let time_1_dead_state = machine.at_time(1).state(&[0, 0]);
         let time_2_dead_state = machine.at_time(2).state(&[0, 0]);
 
-        let time_1_count_1 = counter.at_time(1).literal_for_count(1).unwrap();
-        let time_2_count_1 = counter.at_time(2).literal_for_count(1).unwrap();
-
         assert_eq!(literals(time_1_dead_state), "-5 -6"); // S(t=1, n=00)
         assert_eq!(literals(time_2_dead_state), "-8 -9"); // S(t=2, n=00)
 
-        assert_eq!(format!("{}", time_1_count_1), "14"); // R(t=1, c=1)
-        assert_eq!(format!("{}", time_2_count_1), "15"); // R(t=2, c=1)
-
         assert_dimacs(&formula, &[
-            // (5 and 6) implies 16 which an alias for S(t=1, n=00)
-            "5 6 16 0",
+            // (5 and 6) implies 14 which an alias for S(t=1, n=00)
+            "5 6 14 0",
 
-            // 16 implies (5 and 6)
-            "-5 -16 0",
-            "-6 -16 0",
+            // 14 implies (5 and 6)
+            "-5 -14 0",
+            "-6 -14 0",
 
-            // (8 and 9) implies 17 which is an alias for S(t=2, n=00)
-            "8 9 17 0",
+            // (8 and 9) implies 15 which is an alias for S(t=2, n=00)
+            "8 9 15 0",
 
-            // 17 implies (8 and 9)
-            "-8 -17 0",
-            "-9 -17 0",
+            // 15 implies (8 and 9)
+            "-8 -15 0",
+            "-9 -15 0",
 
             // (1)  S(t=1, n=00) implies R(t=1, c=1)
-            "14 -16 0",
+            "-14 16 0",
 
             // (1)  S(t=2, n=00) implies R(t=2, c=1)
-            "15 -17 0",
+            "-15 17 0",
 
             // (3)  R(t=1, c=1) implies R(t=2, c=1)
-            "-14 15 0",
+            "-16 17 0",
 
             // (5)  S(t=2, n=00) implies -R(t=1, c=1)
-            "-14 -17 0",
+            "-15 -16 0",
         ]);
     }
 }
@@ -319,9 +317,8 @@ mod all_binary_representations_map_to_states {
         let machine = Machine::new(N, LENGTH, &mut formula);
         let goal = Goal::new(N, LENGTH, &mut formula);
         let bounds = Bounds::new(N, LENGTH, &[1]);
-        let counter = Counter::new(N, &bounds, &mut formula);
         let mut logic = Logic::new(&mut formula);
-        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &counter, &mut logic);
+        let mut subject = Subject::new(N, LENGTH, &machine, &goal, &bounds, &mut logic);
 
         subject.all_binary_representations_map_to_states();
 

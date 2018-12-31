@@ -5,7 +5,7 @@ use crate::literal::Literal;
 use crate::binary::Binary;
 use crate::machine::Machine;
 use crate::goal::Goal;
-use crate::counter::Counter;
+use crate::bounds::Bounds;
 use crate::logic::Logic;
 
 pub struct Problem<'a> {
@@ -13,14 +13,13 @@ pub struct Problem<'a> {
     length_of_string: usize,
     machine: &'a Machine,
     goal: &'a Goal,
-    counter: &'a Counter,
+    bounds: &'a Bounds,
     logic: &'a mut Logic<'a>,
-    wasted: Option<Vec<Literal>>,
 }
 
 impl<'a> Problem<'a> {
-    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, goal: &'a Goal, counter: &'a Counter, logic: &'a mut Logic<'a>) -> Self {
-        Self { n, length_of_string, machine, goal, counter, logic, wasted: None }
+    pub fn new(n: usize, length_of_string: usize, machine: &'a Machine, goal: &'a Goal, bounds: &'a Bounds, logic: &'a mut Logic<'a>) -> Self {
+        Self { n, length_of_string, machine, goal, bounds, logic }
     }
 
     pub fn the_machine_starts_in_the_dead_states(&mut self) {
@@ -49,6 +48,7 @@ impl<'a> Problem<'a> {
                     let transition = Logic::and(travel_from, on_symbol);
 
                     self.logic.implies(travel_to, &transition);
+                    self.logic.implies(&transition, travel_to);
                 }
             }
         }
@@ -66,92 +66,20 @@ impl<'a> Problem<'a> {
     }
 
     pub fn the_string_starts_with_ascending_numbers(&mut self) {
-        for time in 0..self.n {
-            let symbol = time + 1;
-            let state = self.machine.at_time(time).state(&[symbol]);
+        let ascending = (1..=self.n).collect::<Vec<_>>();
+        self.the_string_starts_with(&ascending);
+    }
 
-            self.logic.tautology(state.literals());
+    pub fn the_string_starts_with(&mut self, symbols: &[usize]) {
+        for (time, symbol) in symbols.iter().enumerate() {
+            let start_state = self.machine.at_time(time).state(&[*symbol]);
+            self.logic.tautology(start_state.literals());
         }
     }
 
     pub fn the_number_of_wasted_symbols_is_within_bounds(&mut self) {
-        self.allocate_literals_for_wasted_symbols();
-
-        // (1) if Xi is true then the first bit of register i must be true
-        for time in (self.n - 1)..self.length_of_string {
-            let wasted = self.is_wasted_symbol(time);
-            let register = self.counter.at_time(time);
-
-            if let Some(literal) = register.literal_for_count(1) {
-                self.logic.implies(&[wasted], &[literal]);
-            }
-
-            // [not included in the paper because 1 <= k <= n does not cover k=0]
-            // don't allow wasted symbols if the maximum number allowed is zero
-            if register.end() == 0 {
-                self.logic.contradiction(&[wasted]);
-            }
-        }
-
-        // (2) ensures that in the first register only the first bit can be true
-        let first_register = self.counter.at_time(self.n - 1);
-
-        for w in 2..=first_register.end() {
-            if let Some(literal) = first_register.literal_for_count(w) {
-                self.logic.contradiction(&[literal]);
-            }
-        }
-
-        // (3) and (4) together constrain each register i (1 < i < n) to contain
-        // the value of the previous register plus Xi
-        for time in self.n..self.length_of_string {
-            let current_time = self.counter.at_time(time);
-            let previous_time = self.counter.at_time(time - 1);
-
-            let wasted = self.is_wasted_symbol(time);
-
-            // (3)
-            for w in previous_time.start()..=current_time.end() {
-                let current_bit = match current_time.literal_for_count(w) {
-                    Some(literal) => literal,
-                    None => continue,
-                };
-
-                match previous_time.literal_for_count(w) {
-                    Some(previous_bit) => {
-                        self.logic.implies(&[previous_bit], &[current_bit])
-                    },
-                    None => {
-                        self.logic.tautology(&[current_bit])
-                    },
-                }
-            }
-
-            // (4)
-            for w in 2..=current_time.end() {
-                let current_bit = match current_time.literal_for_count(w) {
-                    Some(literal) => literal,
-                    None => continue,
-                };
-
-                let condition = match previous_time.literal_for_count(w - 1) {
-                    Some(literal) => Logic::and(&[literal], &[wasted]),
-                    None => vec![wasted],
-                };
-
-                self.logic.implies(&condition, &[current_bit]);
-            }
-
-            // (5) asserts that there can’t be an overflow on any register as it
-            // would indicate that more than k variables are true
-            let k = current_time.end();
-            if let Some(overflow) = previous_time.literal_for_count(k) {
-                // I think there's a missing negation in the paper:
-                let not_overflow = Logic::negate(&[overflow]);
-
-                self.logic.implies(&[wasted], &not_overflow);
-            }
-        }
+        let wasted_symbols = self.literals_for_wasted_symbols();
+        self.logic.within(&self.bounds, &wasted_symbols);
     }
 
     pub fn all_binary_representations_map_to_states(&mut self) {
@@ -178,18 +106,10 @@ impl<'a> Problem<'a> {
         repeat(0).take(rank + 1).collect()
     }
 
-    fn is_wasted_symbol(&self, time: usize) -> Literal {
-        if let Some(vec) = &self.wasted {
-            return vec[time - (self.n - 1)];
-        }
-
-        panic!("Must allocate literals for wasted symbols first.");
-    }
-
-    fn allocate_literals_for_wasted_symbols(&mut self) {
+    fn literals_for_wasted_symbols(&mut self) -> Vec<Literal> {
         let range = (self.n - 1)..self.length_of_string;
 
-        let literals = range.map(|time| {
+        range.map(|time| {
             let last_rank = self.n - 1;
             let name = Self::dead_state_name(last_rank);
 
@@ -197,9 +117,7 @@ impl<'a> Problem<'a> {
             let dead_state = snapshot.state(&name);
 
             self.logic.alias(dead_state.literals())
-        }).collect();
-
-        self.wasted = Some(literals);
+        }).collect()
     }
 }
 

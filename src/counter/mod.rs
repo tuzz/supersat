@@ -3,22 +3,21 @@ use crate::bounds::Bounds;
 use crate::register::Register;
 
 pub struct Counter {
-    n: usize,
     registers: Vec<Register>,
 }
 
 impl Counter {
-    pub fn new(n: usize, bounds: &Bounds, formula: &mut Formula) -> Self {
+    pub fn new(bounds: &Bounds, formula: &mut Formula) -> Self {
         let registers = bounds.wasted_symbol_ranges()
             .iter()
             .map(|range| Register::new(range.clone(), formula))
             .collect();
 
-        Self { n, registers }
+        Self { registers }
     }
 
-    pub fn at_time(&self, point_in_time: usize) -> &Register {
-        &self.registers[point_in_time - (self.n - 1)]
+    pub fn register(&self, index: usize) -> &Register {
+        &self.registers[index]
     }
 }
 
