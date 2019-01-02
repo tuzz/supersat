@@ -107,12 +107,10 @@ impl<'a> Logic<'a> {
                     None => continue,
                 };
 
-                let condition = match previous_register.literal_for_count(b - 1) {
-                    Some(previous_bit) => Logic::and(&[previous_bit], &[literal]),
-                    None => vec![literal],
-                };
-
-                self.implies(&condition, &[current_bit]);
+                if let Some(previous_bit) = previous_register.literal_for_count(b - 1) {
+                    let condition = Logic::and(&[previous_bit], &[literal]);
+                    self.implies(&condition, &[current_bit]);
+                }
             }
 
             // (5) asserts that there can’t be an overflow on any register as it
